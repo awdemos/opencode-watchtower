@@ -97,6 +97,31 @@ Each logged entry includes `[WATCHTOWER]` prefix for easy parsing.
 - `safe_mv`, `safe_cp`: `no-clobber` by default (won't overwrite)
 - `safe_rm`: Requires explicit `mode: dir-recursive` for recursive deletion
 
+## GTFOBins Risk Classification
+
+Each tool includes a `gtfo_risk` level based on [GTFOBins](https://gtfobins.github.io/) signatures:
+
+| Risk Level | Meaning |
+|------------|---------|
+| **critical** | Can spawn shell, escalate privileges, bypass all security |
+| **high** | Can read/write arbitrary files or execute commands |
+| **medium** | Can leak information or perform limited privileged ops |
+| **low** | Minimal abuse potential |
+
+### Tool Risk Levels
+
+| Tool | Risk | Underlying Binary |
+|------|------|-------------------|
+| `ssh_ls`, `ssh_cat`, `ssh_ps` | medium | `ssh` (tunnel/proxy) |
+| `kubectl_exec_read`, `kubectl_get_yaml`, `kubectl_logs` | high | `kubectl` (secrets, exec) |
+| `rg_search`, `jq_query` | low | `rg`, `jq` (read-only) |
+| `safe_rm` | medium | `rm` (sudo file-write) |
+| `safe_mv`, `safe_cp` | medium | `mv`, `cp` (sudo file-write) |
+| `safe_chown`, `safe_chmod` | medium | `chown`, `chmod` (sudo) |
+| `safe_mkdir`, `safe_touch`, `safe_ln` | low | `mkdir`, `touch`, `ln` |
+
+The `gtfo.json` file contains full signatures for 100+ binaries. AI agents should check this reference before executing any command.
+
 ## Example Usage
 
 ```bash

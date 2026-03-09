@@ -1,8 +1,9 @@
 {
   "$schema": "https://utcp.io/schema/manual.json",
   "name": "watchtower",
-  "version": "1.0.0",
-  "description": "Production-grade remote operations with audit logging. Safe commands for SSH, kubectl, filesystem operations with centralized logging and mutation alerts.",
+  "version": "1.1.0",
+  "description": "Production-grade remote operations with audit logging. Safe commands for SSH, kubectl, filesystem operations with centralized logging and mutation alerts. Includes GTFOBins risk classification.",
+  "gtfo_reference": "./gtfo.json",
   "manual_call_templates": [
     {
       "name": "remote-safe",
@@ -16,6 +17,8 @@
         {
           "name": "ssh_ls",
           "description": "Read-only directory listing via SSH with audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "ssh",
           "inputs": {
             "host": {"type": "string", "description": "Remote host to connect to"},
             "user": {"type": "string", "default": "ubuntu"},
@@ -29,6 +32,8 @@
         {
           "name": "ssh_cat",
           "description": "Read file contents via SSH with audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "ssh",
           "inputs": {
             "host": {"type": "string", "description": "Remote host"},
             "user": {"type": "string", "default": "ubuntu"},
@@ -42,6 +47,8 @@
         {
           "name": "ssh_ps",
           "description": "List processes on remote host via SSH",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "ssh",
           "inputs": {
             "host": {"type": "string", "description": "Remote host"},
             "user": {"type": "string", "default": "ubuntu"},
@@ -54,6 +61,8 @@
         {
           "name": "kubectl_exec_read",
           "description": "Read-only kubectl exec commands (cat, ls, ps, df, top) with audit logging",
+          "gtfo_risk": "high",
+          "gtfo_binary": "kubectl",
           "inputs": {
             "pod": {"type": "string", "description": "Pod name"},
             "ns": {"type": "string", "default": "default", "description": "Namespace"},
@@ -67,6 +76,8 @@
         {
           "name": "kubectl_get_yaml",
           "description": "Get kubernetes resource as YAML with audit logging",
+          "gtfo_risk": "high",
+          "gtfo_binary": "kubectl",
           "inputs": {
             "resource": {"type": "string", "description": "Resource type (pod, deployment, service, etc.)"},
             "name": {"type": "string", "description": "Resource name"},
@@ -79,6 +90,8 @@
         {
           "name": "kubectl_logs",
           "description": "Get pod logs with audit logging",
+          "gtfo_risk": "high",
+          "gtfo_binary": "kubectl",
           "inputs": {
             "pod": {"type": "string", "description": "Pod name"},
             "ns": {"type": "string", "default": "default"},
@@ -91,6 +104,7 @@
         {
           "name": "rg_search",
           "description": "Safe ripgrep search (no --replace, no --exec) with audit logging",
+          "gtfo_risk": "low",
           "inputs": {
             "pattern": {"type": "string", "description": "Search pattern"},
             "path": {"type": "string", "default": "."},
@@ -103,6 +117,7 @@
         {
           "name": "jq_query",
           "description": "Safe JSON processing (read-only queries) with audit logging",
+          "gtfo_risk": "low",
           "inputs": {
             "file": {"type": "string", "description": "JSON file path"},
             "query": {"type": "string", "description": "jq query expression"}
@@ -114,6 +129,8 @@
         {
           "name": "safe_rm",
           "description": "Safe file/directory removal with audit logging (blocks protected paths)",
+          "gtfo_risk": "medium",
+          "gtfo_vectors": ["sudo", "file-write"],
           "inputs": {
             "path": {"type": "string", "description": "Path to remove"},
             "mode": {"type": "string", "enum": ["file", "dir", "dir-recursive"], "default": "file"}
@@ -125,6 +142,7 @@
         {
           "name": "safe_mkdir",
           "description": "Safe directory creation with audit logging",
+          "gtfo_risk": "low",
           "inputs": {
             "path": {"type": "string", "description": "Directory path to create"},
             "mode": {"type": "string", "enum": ["single", "parents"], "default": "parents"}
@@ -136,6 +154,7 @@
         {
           "name": "safe_touch",
           "description": "Safe file creation/timestamp update with audit logging",
+          "gtfo_risk": "low",
           "inputs": {
             "path": {"type": "string", "description": "File path to touch"},
             "timestamp": {"type": "string", "default": "", "description": "Optional timestamp (YYYYMMDDhhmm.ss)"}
@@ -147,6 +166,8 @@
         {
           "name": "safe_mv",
           "description": "Safe file/directory move with audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "mv",
           "inputs": {
             "source": {"type": "string", "description": "Source path"},
             "dest": {"type": "string", "description": "Destination path"},
@@ -159,6 +180,8 @@
         {
           "name": "safe_cp",
           "description": "Safe file copy with audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "cp",
           "inputs": {
             "source": {"type": "string", "description": "Source path"},
             "dest": {"type": "string", "description": "Destination path"},
@@ -171,6 +194,8 @@
         {
           "name": "safe_chown",
           "description": "Safe ownership change with audit logging (restricted combinations)",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "chown",
           "inputs": {
             "path": {"type": "string", "description": "Path to change ownership"},
             "owner": {"type": "string", "enum": ["root:root", "www-data:www-data", "ubuntu:ubuntu", "$USER:$USER"], "default": "$USER:$USER"},
@@ -183,6 +208,8 @@
         {
           "name": "safe_chmod",
           "description": "Safe permission change with audit logging (safe modes only)",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "chmod",
           "inputs": {
             "path": {"type": "string", "description": "Path to change permissions"},
             "mode": {"type": "string", "enum": ["644", "755", "600", "700", "640", "750"], "default": "644"},
@@ -195,6 +222,7 @@
         {
           "name": "safe_ln",
           "description": "Safe symlink creation with audit logging",
+          "gtfo_risk": "low",
           "inputs": {
             "target": {"type": "string", "description": "Target path"},
             "linkpath": {"type": "string", "description": "Link path"},

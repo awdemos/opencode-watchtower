@@ -17,6 +17,12 @@ done
 echo "✅ Audit logs created in $WATCHTOWER_DIR/"
 echo ""
 
+if [ -f "$CONF_DIR/gtfo.json" ]; then
+    echo "✅ GTFOBins signatures available at $CONF_DIR/gtfo.json"
+    echo "   Reference: https://gtfobins.github.io/"
+    echo ""
+fi
+
 if [ -n "$BASH_VERSION" ]; then
     rc_file="$HOME/.bashrc"
 elif [ -n "$ZSH_VERSION" ]; then

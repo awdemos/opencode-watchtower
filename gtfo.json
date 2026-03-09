@@ -1,0 +1,510 @@
+{
+  "$schema": "https://raw.githubusercontent.com/awdemos/opencode-watchtower/main/gtfo.schema.json",
+  "version": "1.0.0",
+  "source": "https://github.com/GTFOBins/GTFOBins.github.io",
+  "description": "GTFOBins signatures for high-risk Unix binaries that can bypass security restrictions",
+  "risk_levels": {
+    "critical": "Can spawn shell, escalate privileges, or bypass all security",
+    "high": "Can read/write arbitrary files or execute commands",
+    "medium": "Can leak information or perform limited operations"
+  },
+  "binaries": {
+    "bash": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid", "caps"],
+      "description": "Shell access, can spawn interactive shell"
+    },
+    "sh": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Shell access"
+    },
+    "zsh": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Shell access"
+    },
+    "dash": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo"],
+      "description": "Shell access"
+    },
+    "ash": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo"],
+      "description": "Shell access"
+    },
+    "csh": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo"],
+      "description": "Shell access"
+    },
+    "ksh": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo"],
+      "description": "Shell access"
+    },
+    "python": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid", "caps"],
+      "description": "Can spawn shell via os.system/exec"
+    },
+    "python3": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid", "caps"],
+      "description": "Can spawn shell via os.system/exec"
+    },
+    "perl": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid", "caps"],
+      "description": "Can spawn shell via system/exec"
+    },
+    "ruby": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can spawn shell via system/exec"
+    },
+    "php": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can spawn shell via system/exec"
+    },
+    "node": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can spawn shell via child_process"
+    },
+    "awk": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can execute system commands via system()"
+    },
+    "gawk": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can execute system commands"
+    },
+    "sed": {
+      "risk": "high",
+      "vectors": ["file-write", "sudo"],
+      "description": "Can write to arbitrary files"
+    },
+    "vi": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid", "file-read", "file-write"],
+      "description": "Can spawn shell, read/write files"
+    },
+    "vim": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid", "file-read", "file-write"],
+      "description": "Can spawn shell, read/write files"
+    },
+    "nvim": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "file-read", "file-write"],
+      "description": "Can spawn shell, read/write files"
+    },
+    "emacs": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "file-read", "file-write"],
+      "description": "Can spawn shell, read/write files"
+    },
+    "nano": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can read/write files with sudo"
+    },
+    "less": {
+      "risk": "medium",
+      "vectors": ["shell", "sudo", "file-read"],
+      "description": "Can spawn shell via !command, read files"
+    },
+    "more": {
+      "risk": "medium",
+      "vectors": ["shell", "sudo", "file-read"],
+      "description": "Can spawn shell via !command"
+    },
+    "man": {
+      "risk": "medium",
+      "vectors": ["shell", "sudo"],
+      "description": "Can spawn shell via !command in pager"
+    },
+    "git": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "file-read"],
+      "description": "Can spawn shell via git-shell, read files"
+    },
+    "curl": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can read/write files, exfiltrate data"
+    },
+    "wget": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-write"],
+      "description": "Can download/write files"
+    },
+    "nc": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "reverse-shell"],
+      "description": "Can create reverse shells, data exfil"
+    },
+    "ncat": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "reverse-shell"],
+      "description": "Can create reverse shells"
+    },
+    "netcat": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "reverse-shell"],
+      "description": "Can create reverse shells"
+    },
+    "socat": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "reverse-shell"],
+      "description": "Can create reverse shells, relay traffic"
+    },
+    "nmap": {
+      "risk": "medium",
+      "vectors": ["shell", "sudo"],
+      "description": "Can spawn shell via --interactive"
+    },
+    "find": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid", "file-read"],
+      "description": "Can spawn shell via -exec, read files"
+    },
+    "xargs": {
+      "risk": "high",
+      "vectors": ["shell", "sudo"],
+      "description": "Can execute arbitrary commands"
+    },
+    "env": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can execute commands with modified env"
+    },
+    "cp": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can overwrite critical files"
+    },
+    "mv": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-write"],
+      "description": "Can move/replace critical files"
+    },
+    "cat": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can read arbitrary files with sudo"
+    },
+    "head": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can read files with sudo"
+    },
+    "tail": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can read files with sudo"
+    },
+    "dd": {
+      "risk": "high",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can read/write raw disk, bypass permissions"
+    },
+    "tar": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid", "file-read"],
+      "description": "Can execute via --checkpoint-action"
+    },
+    "zip": {
+      "risk": "medium",
+      "vectors": ["shell", "sudo", "file-read"],
+      "description": "Can execute commands"
+    },
+    "gcc": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can compile and execute code"
+    },
+    "g++": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can compile and execute code"
+    },
+    "clang": {
+      "risk": "high",
+      "vectors": ["shell", "sudo"],
+      "description": "Can compile and execute code"
+    },
+    "make": {
+      "risk": "high",
+      "vectors": ["shell", "sudo", "suid"],
+      "description": "Can execute arbitrary commands"
+    },
+    "docker": {
+      "risk": "critical",
+      "vectors": ["shell", "sudo", "privilege-escalation"],
+      "description": "Full container access, root on host"
+    },
+    "kubectl": {
+      "risk": "high",
+      "vectors": ["sudo", "privilege-escalation"],
+      "description": "Can exec into pods, access secrets"
+    },
+    "ssh": {
+      "risk": "medium",
+      "vectors": ["sudo", "tunnel", "proxy"],
+      "description": "Can tunnel traffic, proxy commands"
+    },
+    "scp": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can transfer files to/from remote"
+    },
+    "rsync": {
+      "risk": "medium",
+      "vectors": ["shell", "sudo", "file-read", "file-write"],
+      "description": "Can execute commands, transfer files"
+    },
+    "mount": {
+      "risk": "high",
+      "vectors": ["sudo", "suid", "privilege-escalation"],
+      "description": "Can mount filesystems, escalate privs"
+    },
+    "umount": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can unmount filesystems"
+    },
+    "fdisk": {
+      "risk": "high",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Disk manipulation"
+    },
+    "chown": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can change file ownership"
+    },
+    "chmod": {
+      "risk": "medium",
+      "vectors": ["sudo", "suid"],
+      "description": "Can change file permissions"
+    },
+    "chroot": {
+      "risk": "high",
+      "vectors": ["sudo", "suid"],
+      "description": "Can escape via chroot"
+    },
+    "su": {
+      "risk": "critical",
+      "vectors": ["sudo", "suid", "privilege-escalation"],
+      "description": "Switch user, escalate privileges"
+    },
+    "sudo": {
+      "risk": "critical",
+      "vectors": ["suid", "privilege-escalation"],
+      "description": "Execute as any user"
+    },
+    "doas": {
+      "risk": "critical",
+      "vectors": ["suid", "privilege-escalation"],
+      "description": "Execute as another user"
+    },
+    "pkexec": {
+      "risk": "critical",
+      "vectors": ["suid", "privilege-escalation"],
+      "description": "PolicyKit execute as root"
+    },
+    "passwd": {
+      "risk": "high",
+      "vectors": ["suid"],
+      "description": "Can change passwords"
+    },
+    "crontab": {
+      "risk": "high",
+      "vectors": ["sudo", "file-write"],
+      "description": "Can schedule malicious jobs"
+    },
+    "at": {
+      "risk": "high",
+      "vectors": ["sudo", "shell"],
+      "description": "Can schedule command execution"
+    },
+    "screen": {
+      "risk": "medium",
+      "vectors": ["sudo", "suid", "shell"],
+      "description": "Can detach persistent sessions"
+    },
+    "tmux": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can detach persistent sessions"
+    },
+    "script": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can record/execute commands"
+    },
+    "base64": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can encode/decode files"
+    },
+    "xxd": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read", "file-write"],
+      "description": "Can read/write binary files"
+    },
+    "od": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can dump files in various formats"
+    },
+    "hexdump": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can dump files"
+    },
+    "strings": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can extract strings from files"
+    },
+    "gdb": {
+      "risk": "high",
+      "vectors": ["sudo", "suid", "shell"],
+      "description": "Can debug, modify processes, spawn shell"
+    },
+    "strace": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can trace syscalls, read data"
+    },
+    "ltrace": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can trace library calls"
+    },
+    "tcpdump": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can capture network traffic"
+    },
+    "tshark": {
+      "risk": "medium",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can analyze network traffic"
+    },
+    "wireshark": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can capture network traffic"
+    },
+    "iptables": {
+      "risk": "high",
+      "vectors": ["sudo"],
+      "description": "Can modify firewall rules"
+    },
+    "ip": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can modify network config"
+    },
+    "iproute2": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can modify network config"
+    },
+    "service": {
+      "risk": "high",
+      "vectors": ["sudo"],
+      "description": "Can start/stop services"
+    },
+    "systemctl": {
+      "risk": "high",
+      "vectors": ["sudo", "shell"],
+      "description": "Can manage services, exec commands"
+    },
+    "journalctl": {
+      "risk": "low",
+      "vectors": ["sudo", "file-read"],
+      "description": "Can read logs"
+    },
+    "apt": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install packages"
+    },
+    "apt-get": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install packages"
+    },
+    "yum": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install packages"
+    },
+    "dnf": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install packages"
+    },
+    "pip": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install Python packages"
+    },
+    "npm": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install Node packages"
+    },
+    "gem": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install Ruby packages"
+    },
+    "cpan": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install Perl packages"
+    },
+    "easy_install": {
+      "risk": "medium",
+      "vectors": ["sudo", "shell"],
+      "description": "Can install Python packages"
+    },
+    "pkcon": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "PackageKit console"
+    },
+    "snap": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can install snap packages"
+    },
+    "flatpak": {
+      "risk": "medium",
+      "vectors": ["sudo"],
+      "description": "Can install flatpak packages"
+    }
+  },
+  "vectors": {
+    "shell": "Can spawn interactive shell",
+    "sudo": "Can be abused with sudo privileges",
+    "suid": "Can be abused if SUID bit is set",
+    "caps": "Can be abused with special capabilities",
+    "file-read": "Can read arbitrary files",
+    "file-write": "Can write to arbitrary files",
+    "privilege-escalation": "Can escalate to root",
+    "reverse-shell": "Can create reverse shell connection",
+    "tunnel": "Can tunnel/forward traffic",
+    "proxy": "Can proxy connections"
+  }
+}
