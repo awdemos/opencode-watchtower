@@ -1,0 +1,210 @@
+{
+  "$schema": "https://utcp.io/schema/manual.json",
+  "name": "watchtower",
+  "version": "1.0.0",
+  "description": "Production-grade remote operations with audit logging. Safe commands for SSH, kubectl, filesystem operations with centralized logging and mutation alerts.",
+  "manual_call_templates": [
+    {
+      "name": "remote-safe",
+      "description": "Scoped remote system operations with audit logging (ssh, kubectl exec, rg, jq, filesystem)",
+      "call_template": {
+        "call_template_type": "cli",
+        "command": "bash",
+        "working_directory": "/tmp/watchtower"
+      },
+      "tools": [
+        {
+          "name": "ssh_ls",
+          "description": "Read-only directory listing via SSH with audit logging",
+          "inputs": {
+            "host": {"type": "string", "description": "Remote host to connect to"},
+            "user": {"type": "string", "default": "ubuntu"},
+            "path": {"type": "string", "default": "/home/ubuntu"},
+            "port": {"type": "integer", "default": 22}
+          },
+          "call_template": {
+            "args": ["-c", "ssh -p ${port} ${user}@${host} 'ls -la ${path}' | tee -a /tmp/watchtower/ssh.log"]
+          }
+        },
+        {
+          "name": "ssh_cat",
+          "description": "Read file contents via SSH with audit logging",
+          "inputs": {
+            "host": {"type": "string", "description": "Remote host"},
+            "user": {"type": "string", "default": "ubuntu"},
+            "file": {"type": "string", "description": "File path to read"},
+            "port": {"type": "integer", "default": 22}
+          },
+          "call_template": {
+            "args": ["-c", "ssh -p ${port} ${user}@${host} 'cat ${file}' | tee -a /tmp/watchtower/ssh.log"]
+          }
+        },
+        {
+          "name": "ssh_ps",
+          "description": "List processes on remote host via SSH",
+          "inputs": {
+            "host": {"type": "string", "description": "Remote host"},
+            "user": {"type": "string", "default": "ubuntu"},
+            "port": {"type": "integer", "default": 22}
+          },
+          "call_template": {
+            "args": ["-c", "ssh -p ${port} ${user}@${host} 'ps aux' | tee -a /tmp/watchtower/ssh.log"]
+          }
+        },
+        {
+          "name": "kubectl_exec_read",
+          "description": "Read-only kubectl exec commands (cat, ls, ps, df, top) with audit logging",
+          "inputs": {
+            "pod": {"type": "string", "description": "Pod name"},
+            "ns": {"type": "string", "default": "default", "description": "Namespace"},
+            "cmd": {"type": "string", "enum": ["cat", "ls", "ps", "df", "top"], "default": "ls"},
+            "path": {"type": "string", "default": "/", "description": "Path to list/read"}
+          },
+          "call_template": {
+            "args": ["-c", "kubectl exec ${pod} -n ${ns} -- ${cmd} ${path} | tee -a /tmp/watchtower/k8s.log"]
+          }
+        },
+        {
+          "name": "kubectl_get_yaml",
+          "description": "Get kubernetes resource as YAML with audit logging",
+          "inputs": {
+            "resource": {"type": "string", "description": "Resource type (pod, deployment, service, etc.)"},
+            "name": {"type": "string", "description": "Resource name"},
+            "ns": {"type": "string", "default": "default"}
+          },
+          "call_template": {
+            "args": ["-c", "kubectl get ${resource} ${name} -n ${ns} -o yaml | tee -a /tmp/watchtower/k8s.log"]
+          }
+        },
+        {
+          "name": "kubectl_logs",
+          "description": "Get pod logs with audit logging",
+          "inputs": {
+            "pod": {"type": "string", "description": "Pod name"},
+            "ns": {"type": "string", "default": "default"},
+            "tail": {"type": "integer", "default": 100, "description": "Number of lines"}
+          },
+          "call_template": {
+            "args": ["-c", "kubectl logs ${pod} -n ${ns} --tail=${tail} | tee -a /tmp/watchtower/k8s.log"]
+          }
+        },
+        {
+          "name": "rg_search",
+          "description": "Safe ripgrep search (no --replace, no --exec) with audit logging",
+          "inputs": {
+            "pattern": {"type": "string", "description": "Search pattern"},
+            "path": {"type": "string", "default": "."},
+            "type": {"type": "string", "enum": ["code", "text", "path"], "default": "code"}
+          },
+          "call_template": {
+            "args": ["-c", "rg --type ${type} '${pattern}' ${path} | tee -a /tmp/watchtower/search.log"]
+          }
+        },
+        {
+          "name": "jq_query",
+          "description": "Safe JSON processing (read-only queries) with audit logging",
+          "inputs": {
+            "file": {"type": "string", "description": "JSON file path"},
+            "query": {"type": "string", "description": "jq query expression"}
+          },
+          "call_template": {
+            "args": ["-c", "jq '${query}' ${file} | tee -a /tmp/watchtower/search.log"]
+          }
+        },
+        {
+          "name": "safe_rm",
+          "description": "Safe file/directory removal with audit logging (blocks protected paths)",
+          "inputs": {
+            "path": {"type": "string", "description": "Path to remove"},
+            "mode": {"type": "string", "enum": ["file", "dir", "dir-recursive"], "default": "file"}
+          },
+          "call_template": {
+            "args": ["-c", "case '${path}' in /|/home|/etc|/var|/usr|/root|/bin|/sbin|/lib|/opt) echo 'BLOCKED: protected path' >&2; exit 1;; esac; CMD=$(case '${mode}' in file) echo 'rm -f';; dir) echo 'rmdir';; dir-recursive) echo 'rm -rf';; esac); $CMD '${path}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] rm ${mode}: ${path}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_mkdir",
+          "description": "Safe directory creation with audit logging",
+          "inputs": {
+            "path": {"type": "string", "description": "Directory path to create"},
+            "mode": {"type": "string", "enum": ["single", "parents"], "default": "parents"}
+          },
+          "call_template": {
+            "args": ["-c", "if [ '${mode}' = 'parents' ]; then mkdir -p '${path}'; else mkdir '${path}'; fi 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] mkdir ${mode}: ${path}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_touch",
+          "description": "Safe file creation/timestamp update with audit logging",
+          "inputs": {
+            "path": {"type": "string", "description": "File path to touch"},
+            "timestamp": {"type": "string", "default": "", "description": "Optional timestamp (YYYYMMDDhhmm.ss)"}
+          },
+          "call_template": {
+            "args": ["-c", "if [ -n '${timestamp}' ]; then touch -t '${timestamp}' '${path}'; else touch '${path}'; fi 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] touch: ${path}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_mv",
+          "description": "Safe file/directory move with audit logging",
+          "inputs": {
+            "source": {"type": "string", "description": "Source path"},
+            "dest": {"type": "string", "description": "Destination path"},
+            "mode": {"type": "string", "enum": ["no-clobber", "force", "backup"], "default": "no-clobber"}
+          },
+          "call_template": {
+            "args": ["-c", "FLAG=$(case '${mode}' in no-clobber) echo '-n';; force) echo '-f';; backup) echo '-b';; esac); mv $FLAG '${source}' '${dest}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] mv ${mode}: ${source} -> ${dest}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_cp",
+          "description": "Safe file copy with audit logging",
+          "inputs": {
+            "source": {"type": "string", "description": "Source path"},
+            "dest": {"type": "string", "description": "Destination path"},
+            "mode": {"type": "string", "enum": ["no-clobber", "force", "backup", "archive"], "default": "no-clobber"}
+          },
+          "call_template": {
+            "args": ["-c", "FLAG=$(case '${mode}' in no-clobber) echo '-n';; force) echo '-f';; backup) echo '-b';; archive) echo '-a';; esac); cp $FLAG '${source}' '${dest}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] cp ${mode}: ${source} -> ${dest}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_chown",
+          "description": "Safe ownership change with audit logging (restricted combinations)",
+          "inputs": {
+            "path": {"type": "string", "description": "Path to change ownership"},
+            "owner": {"type": "string", "enum": ["root:root", "www-data:www-data", "ubuntu:ubuntu", "$USER:$USER"], "default": "$USER:$USER"},
+            "recursive": {"type": "string", "enum": ["no", "yes"], "default": "no"}
+          },
+          "call_template": {
+            "args": ["-c", "RFLAG=$(if [ '${recursive}' = 'yes' ]; then echo '-R'; fi); chown $RFLAG '${owner}' '${path}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] chown ${owner} (recursive=${recursive}): ${path}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_chmod",
+          "description": "Safe permission change with audit logging (safe modes only)",
+          "inputs": {
+            "path": {"type": "string", "description": "Path to change permissions"},
+            "mode": {"type": "string", "enum": ["644", "755", "600", "700", "640", "750"], "default": "644"},
+            "recursive": {"type": "string", "enum": ["no", "yes"], "default": "no"}
+          },
+          "call_template": {
+            "args": ["-c", "RFLAG=$(if [ '${recursive}' = 'yes' ]; then echo '-R'; fi); chmod $RFLAG '${mode}' '${path}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] chmod ${mode} (recursive=${recursive}): ${path}\" >> /tmp/watchtower/fs.log"]
+          }
+        },
+        {
+          "name": "safe_ln",
+          "description": "Safe symlink creation with audit logging",
+          "inputs": {
+            "target": {"type": "string", "description": "Target path"},
+            "linkpath": {"type": "string", "description": "Link path"},
+            "mode": {"type": "string", "enum": ["soft", "force-soft"], "default": "soft"}
+          },
+          "call_template": {
+            "args": ["-c", "FLAG=$(case '${mode}' in soft) echo '-s';; force-soft) echo '-sf';; esac); ln $FLAG '${target}' '${linkpath}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] ln ${mode}: ${target} -> ${linkpath}\" >> /tmp/watchtower/fs.log"]
+          }
+        }
+      ]
+    }
+  ]
+}
