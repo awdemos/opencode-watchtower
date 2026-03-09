@@ -2,6 +2,10 @@
 
 Production-grade remote operations with audit logging. Safe commands for SSH, kubectl, and filesystem operations with centralized logging and mutation alerts.
 
+## Requirements
+
+This plugin requires the **[UTCP Bridge](https://github.com/universal-tool-calling-protocol/utcp-mcp)** on your system. The 16 UTCP tools are designed for AI agents to safely execute remote commands with full audit trails. Without UTCP, you only get the shell commands (`wt_*`) — the core value is in the guarded AI-accessible tools.
+
 ## Install
 
 ```bash
