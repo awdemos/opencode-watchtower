@@ -13,9 +13,10 @@ WT_RESET='\033[0m'
 
 wt_init() {
     mkdir -p "$WATCHTOWER_DIR"
+    chmod 700 "$WATCHTOWER_DIR" 2>/dev/null || true
     for log in "${WATCHTOWER_LOGS[@]}"; do
         touch "$WATCHTOWER_DIR/$log"
-        chmod 644 "$WATCHTOWER_DIR/$log"
+        chmod 600 "$WATCHTOWER_DIR/$log"
     done
     echo -e "${WT_GREEN}✅ Watchtower initialized in $WATCHTOWER_DIR/${WT_RESET}"
     echo "   Logs: ${WATCHTOWER_LOGS[*]}"
@@ -23,7 +24,8 @@ wt_init() {
 
 wt_clean() {
     for log in "${WATCHTOWER_LOGS[@]}"; do
-        > "$WATCHTOWER_DIR/$log"
+        : > "$WATCHTOWER_DIR/$log"
+        chmod 600 "$WATCHTOWER_DIR/$log"
     done
     echo -e "${WT_GREEN}✅ Watchtower logs cleaned${WT_RESET}"
 }
@@ -36,12 +38,22 @@ wt_stats() {
     fi
     echo ""
     echo -e "${WT_YELLOW}By tool:${WT_RESET}"
-    grep -h '\[WATCHTOWER\]' "$WATCHTOWER_DIR"/*.log 2>/dev/null | \
-        sed 's/.*\[WATCHTOWER\] //' | cut -d' ' -f1 | sort | uniq -c | sort -rn
+    local logs=()
+    for log in "${WATCHTOWER_LOGS[@]}"; do
+        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
+    done
+    if [ ${#logs[@]} -gt 0 ]; then
+        grep -h '\[WATCHTOWER\]' "${logs[@]}" 2>/dev/null | \
+            sed 's/.*\[WATCHTOWER\] //' | cut -d' ' -f1 | sort | uniq -c | sort -rn
+    fi
     echo ""
     echo -e "${WT_YELLOW}By log file:${WT_RESET}"
     for log in "${WATCHTOWER_LOGS[@]}"; do
-        count=$(wc -l < "$WATCHTOWER_DIR/$log" 2>/dev/null || echo 0)
+        if [ -f "$WATCHTOWER_DIR/$log" ]; then
+            count=$(wc -l < "$WATCHTOWER_DIR/$log")
+        else
+            count=0
+        fi
         printf "  %-15s %s entries\n" "$log" "$count"
     done
 }
@@ -51,7 +63,11 @@ wt_watch() {
         echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
         return 1
     fi
-    watch -n 2 "tail -n 25 $WATCHTOWER_DIR/*.log 2>/dev/null | tail -n 25"
+    local log_list=""
+    for log in "${WATCHTOWER_LOGS[@]}"; do
+        log_list="$log_list $WATCHTOWER_DIR/$log"
+    done
+    watch -n 2 "tail -n 25$log_list 2>/dev/null | tail -n 25"
 }
 
 wt_tail() {
@@ -59,7 +75,12 @@ wt_tail() {
         echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
         return 1
     fi
-    tail -f "$WATCHTOWER_DIR"/*.log
+    local logs=()
+    for log in "${WATCHTOWER_LOGS[@]}"; do
+        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
+    done
+    [ ${#logs[@]} -eq 0 ] && return 0
+    tail -f "${logs[@]}"
 }
 
 wt_alert() {
@@ -68,7 +89,12 @@ wt_alert() {
         return 1
     fi
     echo -e "${WT_YELLOW}🚨 Watching for mutations (rm, chmod, chown)...${WT_RESET}"
-    tail -f "$WATCHTOWER_DIR"/*.log 2>/dev/null | \
+    local logs=()
+    for log in "${WATCHTOWER_LOGS[@]}"; do
+        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
+    done
+    [ ${#logs[@]} -eq 0 ] && return 0
+    tail -f "${logs[@]}" 2>/dev/null | \
         grep --line-buffered -E "(rm|chmod|chown)" | \
         while read -r line; do
             echo -e "${WT_RED}🚨 MUTATION: $line${WT_RESET}"
@@ -76,25 +102,35 @@ wt_alert() {
 }
 
 wt_export() {
-    local output="${1:-/var/log/watchtower-export.json}"
+    local output="${1:-$WATCHTOWER_DIR/watchtower-export.json}"
     if [ ! -d "$WATCHTOWER_DIR" ]; then
         echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
         return 1
     fi
+    local output_dir
+    output_dir=$(dirname "$output")
+    mkdir -p "$output_dir"
     echo "Exporting logs to $output..."
     local first=true
     echo '{"events": [' > "$output"
     for log in "${WATCHTOWER_LOGS[@]}"; do
-        while IFS= read -r line; do
+        [ -f "$WATCHTOWER_DIR/$log" ] || continue
+        while IFS= read -r line || [ -n "$line" ]; do
             if [ -n "$line" ]; then
-                [ "$first" = false ] && echo ',' >> "$output"
+                [ "$first" = false ] && printf ',' >> "$output"
                 first=false
-                escaped=$(echo "$line" | sed 's/"/\\"/g')
-                echo "{\"log\": \"$log\", \"entry\": \"$escaped\"}" >> "$output"
+                local escaped="$line"
+                escaped="${escaped//\\/\\\\}"
+                escaped="${escaped//\"/\\\"}"
+                escaped="${escaped//$'\n'/\\n}"
+                escaped="${escaped//$'\r'/\\r}"
+                escaped="${escaped//$'\t'/\\t}"
+                printf '{"log": "%s", "entry": "%s"}\n' "$log" "$escaped" >> "$output"
             fi
         done < "$WATCHTOWER_DIR/$log"
     done
     echo ']}' >> "$output"
+    chmod 600 "$output" 2>/dev/null || true
     echo -e "${WT_GREEN}✅ Exported to $output${WT_RESET}"
 }
 
@@ -106,12 +142,17 @@ wt_report() {
     fi
     echo ""
     echo -e "${WT_YELLOW}Command frequency (last 24h):${WT_RESET}"
-    find "$WATCHTOWER_DIR" -name "*.log" -mtime -1 -exec cat {} \; 2>/dev/null | \
-        sed -n 's/.*\[WATCHTOWER\] \([^ ]*\).*/\1/p' | sort | uniq -c | sort -rn | head -20
+    for log in "${WATCHTOWER_LOGS[@]}"; do
+        [ -f "$WATCHTOWER_DIR/$log" ] && cat "$WATCHTOWER_DIR/$log" 2>/dev/null
+    done | sed -n 's/.*\[WATCHTOWER\] \([^ ]*\).*/\1/p' | sort | uniq -c | sort -rn | head -20
     echo ""
     echo -e "${WT_YELLOW}Total entries by log:${WT_RESET}"
     for log in "${WATCHTOWER_LOGS[@]}"; do
-        count=$(wc -l < "$WATCHTOWER_DIR/$log" 2>/dev/null || echo 0)
+        if [ -f "$WATCHTOWER_DIR/$log" ]; then
+            count=$(wc -l < "$WATCHTOWER_DIR/$log")
+        else
+            count=0
+        fi
         printf "  %-15s %s entries\n" "$log" "$count"
     done
 }
@@ -123,7 +164,12 @@ wt_recent() {
         echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
         return 1
     fi
-    tail -n "$n" "$WATCHTOWER_DIR"/*.log 2>/dev/null
+    local logs=()
+    for log in "${WATCHTOWER_LOGS[@]}"; do
+        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
+    done
+    [ ${#logs[@]} -eq 0 ] && return 0
+    tail -n "$n" "${logs[@]}" 2>/dev/null
 }
 
 wt_status() {

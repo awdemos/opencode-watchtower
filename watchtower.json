@@ -26,7 +26,7 @@
             "port": {"type": "integer", "default": 22}
           },
           "call_template": {
-            "args": ["-c", "ssh -p ${port} ${user}@${host} 'ls -la ${path}' | tee -a /tmp/watchtower/ssh.log"]
+            "args": ["-c", "ssh -p \"${port}\" \"${user}@${host}\" \"ls -la \\\"${path}\\\"\" | tee -a /tmp/watchtower/ssh.log"]
           }
         },
         {
@@ -41,7 +41,7 @@
             "port": {"type": "integer", "default": 22}
           },
           "call_template": {
-            "args": ["-c", "ssh -p ${port} ${user}@${host} 'cat ${file}' | tee -a /tmp/watchtower/ssh.log"]
+            "args": ["-c", "ssh -p \"${port}\" \"${user}@${host}\" \"cat \\\"${file}\\\"\" | tee -a /tmp/watchtower/ssh.log"]
           }
         },
         {
@@ -55,7 +55,7 @@
             "port": {"type": "integer", "default": 22}
           },
           "call_template": {
-            "args": ["-c", "ssh -p ${port} ${user}@${host} 'ps aux' | tee -a /tmp/watchtower/ssh.log"]
+            "args": ["-c", "ssh -p \"${port}\" \"${user}@${host}\" \"ps aux\" | tee -a /tmp/watchtower/ssh.log"]
           }
         },
         {
@@ -70,7 +70,7 @@
             "path": {"type": "string", "default": "/", "description": "Path to list/read"}
           },
           "call_template": {
-            "args": ["-c", "kubectl exec ${pod} -n ${ns} -- ${cmd} ${path} | tee -a /tmp/watchtower/k8s.log"]
+            "args": ["-c", "kubectl exec \"${pod}\" -n \"${ns}\" -- \"${cmd}\" \"${path}\" | tee -a /tmp/watchtower/k8s.log"]
           }
         },
         {
@@ -84,7 +84,7 @@
             "ns": {"type": "string", "default": "default"}
           },
           "call_template": {
-            "args": ["-c", "kubectl get ${resource} ${name} -n ${ns} -o yaml | tee -a /tmp/watchtower/k8s.log"]
+            "args": ["-c", "kubectl get \"${resource}\" \"${name}\" -n \"${ns}\" -o yaml | tee -a /tmp/watchtower/k8s.log"]
           }
         },
         {
@@ -98,7 +98,7 @@
             "tail": {"type": "integer", "default": 100, "description": "Number of lines"}
           },
           "call_template": {
-            "args": ["-c", "kubectl logs ${pod} -n ${ns} --tail=${tail} | tee -a /tmp/watchtower/k8s.log"]
+            "args": ["-c", "kubectl logs \"${pod}\" -n \"${ns}\" --tail=\"${tail}\" | tee -a /tmp/watchtower/k8s.log"]
           }
         },
         {
@@ -111,7 +111,7 @@
             "type": {"type": "string", "enum": ["code", "text", "path"], "default": "code"}
           },
           "call_template": {
-            "args": ["-c", "rg --type ${type} '${pattern}' ${path} | tee -a /tmp/watchtower/search.log"]
+            "args": ["-c", "rg --type \"${type}\" '${pattern}' \"${path}\" | tee -a /tmp/watchtower/search.log"]
           }
         },
         {
@@ -123,7 +123,7 @@
             "query": {"type": "string", "description": "jq query expression"}
           },
           "call_template": {
-            "args": ["-c", "jq '${query}' ${file} | tee -a /tmp/watchtower/search.log"]
+            "args": ["-c", "jq '${query}' \"${file}\" | tee -a /tmp/watchtower/search.log"]
           }
         },
         {
@@ -136,7 +136,7 @@
             "mode": {"type": "string", "enum": ["file", "dir", "dir-recursive"], "default": "file"}
           },
           "call_template": {
-            "args": ["-c", "case '${path}' in /|/home|/etc|/var|/usr|/root|/bin|/sbin|/lib|/opt) echo 'BLOCKED: protected path' >&2; exit 1;; esac; CMD=$(case '${mode}' in file) echo 'rm -f';; dir) echo 'rmdir';; dir-recursive) echo 'rm -rf';; esac); $CMD '${path}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] rm ${mode}: ${path}\" >> /tmp/watchtower/fs.log"]
+            "args": ["-c", "case '${path}' in /|/home|/home/*|/etc|/etc/*|/var|/var/*|/usr|/usr/*|/root|/root/*|/bin|/bin/*|/sbin|/sbin/*|/lib|/lib/*|/opt|/opt/*) echo 'BLOCKED: protected path' >&2; exit 1;; esac; case '${mode}' in file) rm -f '${path}';; dir) rmdir '${path}';; dir-recursive) rm -rf '${path}';; esac 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] rm ${mode}: ${path}\" >> /tmp/watchtower/fs.log"]
           }
         },
         {
@@ -174,7 +174,7 @@
             "mode": {"type": "string", "enum": ["no-clobber", "force", "backup"], "default": "no-clobber"}
           },
           "call_template": {
-            "args": ["-c", "FLAG=$(case '${mode}' in no-clobber) echo '-n';; force) echo '-f';; backup) echo '-b';; esac); mv $FLAG '${source}' '${dest}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] mv ${mode}: ${source} -> ${dest}\" >> /tmp/watchtower/fs.log"]
+            "args": ["-c", "FLAG=$(case '${mode}' in no-clobber) echo '-n';; force) echo '-f';; backup) echo '-b';; esac); mv ${FLAG:+\"$FLAG\"} \"${source}\" \"${dest}\" 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] mv ${mode}: ${source} -> ${dest}\" >> /tmp/watchtower/fs.log"]
           }
         },
         {
@@ -188,7 +188,7 @@
             "mode": {"type": "string", "enum": ["no-clobber", "force", "backup", "archive"], "default": "no-clobber"}
           },
           "call_template": {
-            "args": ["-c", "FLAG=$(case '${mode}' in no-clobber) echo '-n';; force) echo '-f';; backup) echo '-b';; archive) echo '-a';; esac); cp $FLAG '${source}' '${dest}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] cp ${mode}: ${source} -> ${dest}\" >> /tmp/watchtower/fs.log"]
+            "args": ["-c", "FLAG=$(case '${mode}' in no-clobber) echo '-n';; force) echo '-f';; backup) echo '-b';; archive) echo '-a';; esac); cp ${FLAG:+\"$FLAG\"} \"${source}\" \"${dest}\" 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] cp ${mode}: ${source} -> ${dest}\" >> /tmp/watchtower/fs.log"]
           }
         },
         {
@@ -202,7 +202,7 @@
             "recursive": {"type": "string", "enum": ["no", "yes"], "default": "no"}
           },
           "call_template": {
-            "args": ["-c", "RFLAG=$(if [ '${recursive}' = 'yes' ]; then echo '-R'; fi); chown $RFLAG '${owner}' '${path}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] chown ${owner} (recursive=${recursive}): ${path}\" >> /tmp/watchtower/fs.log"]
+            "args": ["-c", "RFLAG=$(if [ '${recursive}' = 'yes' ]; then echo '-R'; fi); chown ${RFLAG:+\"$RFLAG\"} \"${owner}\" \"${path}\" 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] chown ${owner} (recursive=${recursive}): ${path}\" >> /tmp/watchtower/fs.log"]
           }
         },
         {
@@ -216,7 +216,7 @@
             "recursive": {"type": "string", "enum": ["no", "yes"], "default": "no"}
           },
           "call_template": {
-            "args": ["-c", "RFLAG=$(if [ '${recursive}' = 'yes' ]; then echo '-R'; fi); chmod $RFLAG '${mode}' '${path}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] chmod ${mode} (recursive=${recursive}): ${path}\" >> /tmp/watchtower/fs.log"]
+            "args": ["-c", "RFLAG=$(if [ '${recursive}' = 'yes' ]; then echo '-R'; fi); chmod ${RFLAG:+\"$RFLAG\"} \"${mode}\" \"${path}\" 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] chmod ${mode} (recursive=${recursive}): ${path}\" >> /tmp/watchtower/fs.log"]
           }
         },
         {
@@ -229,7 +229,7 @@
             "mode": {"type": "string", "enum": ["soft", "force-soft"], "default": "soft"}
           },
           "call_template": {
-            "args": ["-c", "FLAG=$(case '${mode}' in soft) echo '-s';; force-soft) echo '-sf';; esac); ln $FLAG '${target}' '${linkpath}' 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] ln ${mode}: ${target} -> ${linkpath}\" >> /tmp/watchtower/fs.log"]
+            "args": ["-c", "FLAG=$(case '${mode}' in soft) echo '-s';; force-soft) echo '-sf';; esac); ln ${FLAG:+\"$FLAG\"} \"${target}\" \"${linkpath}\" 2>&1 | tee -a /tmp/watchtower/fs.log; echo \"[WATCHTOWER] ln ${mode}: ${target} -> ${linkpath}\" >> /tmp/watchtower/fs.log"]
           }
         }
       ]

@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/awdemos/opencode-watchtower/main/gtfo.schema.json",
+  "title": "GTFOBins Signatures",
+  "description": "Schema for GTFOBins signatures describing high-risk Unix binaries",
+  "type": "object",
+  "required": ["version", "source", "description", "risk_levels", "binaries", "vectors"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "version": {
+      "type": "string",
+      "description": "Schema version of the signatures file"
+    },
+    "source": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL referencing the original GTFOBins data source"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of the signatures file"
+    },
+    "risk_levels": {
+      "type": "object",
+      "description": "Mapping of risk level names to their human-readable descriptions",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "binaries": {
+      "type": "object",
+      "description": "Mapping of binary names to their risk profiles",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["risk", "description"],
+        "properties": {
+          "risk": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Risk level of the binary"
+          },
+          "vectors": {
+            "type": "array",
+            "description": "Abuse vectors applicable to this binary",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of the binary's risk"
+          }
+        }
+      }
+    },
+    "vectors": {
+      "type": "object",
+      "description": "Mapping of vector names to their human-readable descriptions",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}
