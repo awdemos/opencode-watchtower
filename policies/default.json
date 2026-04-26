@@ -1,0 +1,153 @@
+{
+  "version": "2.0.0",
+  "description": "Default Watchtower policy set. Safe defaults with explicit grants.",
+  "policies": [
+    {
+      "name": "filesystem-read-home",
+      "description": "Allow reading files in user home directories",
+      "priority": 100,
+      "match": {
+        "domain": "filesystem",
+        "operation": ["read", "list"]
+      },
+      "condition": "target.path.startswith('/home/') and '..' not in target.path and identity.capabilities.count('fs:read') > 0",
+      "action": "allow",
+      "audit": "standard",
+      "risk_level": "low"
+    },
+    {
+      "name": "filesystem-write-tmp",
+      "description": "Allow writes to /tmp with restrictions",
+      "priority": 90,
+      "match": {
+        "domain": "filesystem",
+        "operation": ["write", "create_file", "create_dir", "copy", "move"]
+      },
+      "condition": "target.path.startswith('/tmp/') and '..' not in target.path",
+      "action": "allow",
+      "audit": "standard",
+      "risk_level": "low"
+    },
+    {
+      "name": "filesystem-delete-tmp",
+      "description": "Allow deleting files in /tmp",
+      "priority": 85,
+      "match": {
+        "domain": "filesystem",
+        "operation": "delete"
+      },
+      "condition": "target.path.startswith('/tmp/') and '..' not in target.path and params.get('mode') != 'dir-recursive'",
+      "action": "allow",
+      "audit": "alert",
+      "risk_level": "medium"
+    },
+    {
+      "name": "filesystem-protected-system",
+      "description": "Block all mutations on system directories",
+      "priority": 50,
+      "match": {
+        "domain": "filesystem",
+        "operation": ["write", "delete", "chmod", "chown", "move", "create_dir", "create_file"]
+      },
+      "condition": "any(target.path.startswith(p) for p in ('/etc', '/usr', '/bin', '/sbin', '/lib', '/lib64', '/boot', '/sys', '/proc')) or target.path in ('/', '/etc', '/usr', '/bin', '/sbin', '/lib', '/lib64')",
+      "action": "deny",
+      "audit": "alert",
+      "risk_level": "critical"
+    },
+    {
+      "name": "filesystem-home-mutation",
+      "description": "Require escalation for mutations outside tmp",
+      "priority": 40,
+      "match": {
+        "domain": "filesystem",
+        "operation": ["delete", "chmod", "chown", "move"]
+      },
+      "condition": "not target.path.startswith('/tmp/')",
+      "action": "escalate",
+      "audit": "alert",
+      "risk_level": "high"
+    },
+    {
+      "name": "ssh-read-only",
+      "description": "Allow SSH read-only operations",
+      "priority": 100,
+      "match": {
+        "domain": "ssh",
+        "operation": ["list", "read", "ps"]
+      },
+      "condition": "identity.capabilities.count('ssh:read') > 0",
+      "action": "allow",
+      "audit": "standard",
+      "risk_level": "medium"
+    },
+    {
+      "name": "kubernetes-read-only",
+      "description": "Allow read-only Kubernetes operations",
+      "priority": 100,
+      "match": {
+        "domain": "kubernetes",
+        "operation": ["logs", "get", "list"]
+      },
+      "condition": "identity.capabilities.count('k8s:read') > 0",
+      "action": "allow",
+      "audit": "standard",
+      "risk_level": "medium"
+    },
+    {
+      "name": "kubernetes-exec-restricted",
+      "description": "Escalate kubectl exec on production namespaces",
+      "priority": 80,
+      "match": {
+        "domain": "kubernetes",
+        "operation": "exec"
+      },
+      "condition": "target.namespace not in ('staging', 'dev', 'test')",
+      "action": "escalate",
+      "audit": "alert",
+      "risk_level": "high"
+    },
+    {
+      "name": "search-safe",
+      "description": "Allow read-only search operations",
+      "priority": 100,
+      "match": {
+        "domain": "search",
+        "operation": ["rg", "jq"]
+      },
+      "condition": "identity.capabilities.count('search:read') > 0",
+      "action": "allow",
+      "audit": "standard",
+      "risk_level": "low"
+    },
+    {
+      "name": "gtfo-critical-escalate",
+      "description": "Escalate any operation involving critical GTFOBins",
+      "priority": 200,
+      "match": {},
+      "condition": "params.get('gtfo_risk') == 'critical'",
+      "action": "escalate",
+      "audit": "alert",
+      "risk_level": "critical"
+    },
+    {
+      "name": "gtfo-high-shadow",
+      "description": "Shadow-log any operation involving high-risk GTFOBins",
+      "priority": 180,
+      "match": {},
+      "condition": "params.get('gtfo_risk') == 'high'",
+      "action": "shadow",
+      "audit": "alert",
+      "risk_level": "high"
+    },
+    {
+      "name": "default-deny",
+      "description": "Deny everything not explicitly allowed",
+      "priority": 0,
+      "match": {},
+      "condition": "True",
+      "action": "deny",
+      "audit": "standard",
+      "risk_level": "medium"
+    }
+  ]
+}

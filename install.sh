@@ -1,29 +1,42 @@
 #!/usr/bin/env bash
 set -e
 
-WATCHTOWER_DIR="${WATCHTOWER_DIR:-/tmp/watchtower}"
+WATCHTOWER_DIR="${WATCHTOWER_DIR:-$HOME/.watchtower}"
 CONF_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-echo "=== Watchtower Setup ==="
+echo "=== Watchtower 2.0 Setup ==="
 echo ""
+
+# Check Python
+if ! command -v python3 &>/dev/null; then
+    echo "❌ python3 is required but not installed"
+    exit 1
+fi
 
 mkdir -p "$WATCHTOWER_DIR"
 chmod 700 "$WATCHTOWER_DIR"
 
-for log in ssh.log k8s.log search.log fs.log; do
-    touch "$WATCHTOWER_DIR/$log"
-    chmod 600 "$WATCHTOWER_DIR/$log"
-done
-
-echo "✅ Audit logs created in $WATCHTOWER_DIR/"
-echo ""
-
-if [ -f "$CONF_DIR/gtfo.json" ]; then
-    echo "✅ GTFOBins signatures available at $CONF_DIR/gtfo.json"
-    echo "   Reference: https://gtfobins.github.io/"
-    echo ""
+# Create default policy if missing
+if [ ! -f "$WATCHTOWER_DIR/policy.json" ]; then
+    cp "$CONF_DIR/policies/default.json" "$WATCHTOWER_DIR/policy.json"
+    echo "✅ Default policy installed"
 fi
 
+# Initialize ledger
+PYTHONPATH="$CONF_DIR:$PYTHONPATH" python3 -m watchtower.cli init
+
+# Create symlinks for safe binaries
+if [ -d "$CONF_DIR/bin" ]; then
+    for cmd in safe-rm safe-cp safe-mv safe-mkdir safe-touch safe-chown safe-chmod safe-ln \
+               ssh-ls ssh-cat ssh-ps \
+               kubectl-exec-read kubectl-get-yaml kubectl-logs \
+               rg-search jq-query; do
+        ln -sf "$CONF_DIR/bin/watchtower-safe" "$CONF_DIR/bin/$cmd" 2>/dev/null || true
+    done
+    echo "✅ Safe command wrappers installed"
+fi
+
+# Shell integration
 if [ -n "$BASH_VERSION" ]; then
     rc_file="$HOME/.bashrc"
 elif [ -n "$ZSH_VERSION" ]; then
@@ -39,7 +52,7 @@ if grep -qF "$source_line" "$rc_file" 2>/dev/null; then
 else
     {
         echo ""
-        echo "# Watchtower - audit logging for safe operations"
+        echo "# Watchtower 2.0 - policy-driven audit system"
         echo "$source_line"
     } >> "$rc_file"
     echo "✅ Added to $rc_file"

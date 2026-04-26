@@ -1,0 +1,7 @@
+# Watchtower 2.0 has no external runtime dependencies.
+# It uses only the Python standard library for maximum portability.
+# 
+# Optional enhancements:
+#   blake3>=0.3.0      -- faster hashing (falls back to hashlib.sha256)
+#   pyyaml>=6.0        -- YAML policy files (falls back to JSON)
+#   python-seccomp>=0.2 -- syscall filtering (Linux only)

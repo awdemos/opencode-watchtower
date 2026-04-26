@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# watchtower.sh - Audit logging and monitoring for safe operations
+# watchtower.sh - Shell interface for Watchtower 2.0
 # Source this file: source /path/to/watchtower.sh
 
-WATCHTOWER_DIR="${WATCHTOWER_DIR:-/tmp/watchtower}"
-WATCHTOWER_LOGS=("ssh.log" "k8s.log" "search.log" "fs.log")
+WATCHTOWER_DIR="${WATCHTOWER_DIR:-$HOME/.watchtower}"
+WT_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 WT_RED='\033[0;31m'
 WT_GREEN='\033[0;32m'
@@ -11,51 +11,30 @@ WT_YELLOW='\033[0;33m'
 WT_BLUE='\033[0;34m'
 WT_RESET='\033[0m'
 
+# Python module path
+WT_PYTHON="${WT_PYTHON:-python3}"
+WT_MODULE="${WT_SCRIPT_DIR}"
+
 wt_init() {
-    mkdir -p "$WATCHTOWER_DIR"
-    chmod 700 "$WATCHTOWER_DIR" 2>/dev/null || true
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        touch "$WATCHTOWER_DIR/$log"
-        chmod 600 "$WATCHTOWER_DIR/$log"
-    done
-    echo -e "${WT_GREEN}✅ Watchtower initialized in $WATCHTOWER_DIR/${WT_RESET}"
-    echo "   Logs: ${WATCHTOWER_LOGS[*]}"
+    if ! command -v "$WT_PYTHON" &>/dev/null; then
+        echo -e "${WT_RED}Error: python3 not found${WT_RESET}"
+        return 1
+    fi
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli init
 }
 
 wt_clean() {
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        : > "$WATCHTOWER_DIR/$log"
-        chmod 600 "$WATCHTOWER_DIR/$log"
-    done
-    echo -e "${WT_GREEN}✅ Watchtower logs cleaned${WT_RESET}"
+    read -p "Delete all ledger files in $WATCHTOWER_DIR? [y/N] " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        rm -f "$WATCHTOWER_DIR"/ledger-*.jsonl
+        echo -e "${WT_GREEN}✅ Ledger cleaned${WT_RESET}"
+    else
+        echo "Cancelled"
+    fi
 }
 
 wt_stats() {
-    echo -e "${WT_BLUE}=== Watchtower Statistics ===${WT_RESET}"
-    if [ ! -d "$WATCHTOWER_DIR" ]; then
-        echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
-        return 1
-    fi
-    echo ""
-    echo -e "${WT_YELLOW}By tool:${WT_RESET}"
-    local logs=()
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
-    done
-    if [ ${#logs[@]} -gt 0 ]; then
-        grep -h '\[WATCHTOWER\]' "${logs[@]}" 2>/dev/null | \
-            sed 's/.*\[WATCHTOWER\] //' | cut -d' ' -f1 | sort | uniq -c | sort -rn
-    fi
-    echo ""
-    echo -e "${WT_YELLOW}By log file:${WT_RESET}"
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        if [ -f "$WATCHTOWER_DIR/$log" ]; then
-            count=$(wc -l < "$WATCHTOWER_DIR/$log")
-        else
-            count=0
-        fi
-        printf "  %-15s %s entries\n" "$log" "$count"
-    done
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli stats
 }
 
 wt_watch() {
@@ -63,113 +42,33 @@ wt_watch() {
         echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
         return 1
     fi
-    local log_list=""
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        log_list="$log_list $WATCHTOWER_DIR/$log"
+    echo -e "${WT_BLUE}=== Watchtower Live Dashboard ===${WT_RESET}"
+    echo "Press Ctrl+C to stop"
+    while true; do
+        clear
+        PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli stats
+        sleep 2
     done
-    watch -n 2 "tail -n 25$log_list 2>/dev/null | tail -n 25"
 }
 
 wt_tail() {
-    if [ ! -d "$WATCHTOWER_DIR" ]; then
-        echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
-        return 1
-    fi
-    local logs=()
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
-    done
-    [ ${#logs[@]} -eq 0 ] && return 0
-    tail -f "${logs[@]}"
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli tail -n "${1:-20}"
 }
 
 wt_alert() {
-    if [ ! -d "$WATCHTOWER_DIR" ]; then
-        echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
-        return 1
-    fi
-    echo -e "${WT_YELLOW}🚨 Watching for mutations (rm, chmod, chown)...${WT_RESET}"
-    local logs=()
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
-    done
-    [ ${#logs[@]} -eq 0 ] && return 0
-    tail -f "${logs[@]}" 2>/dev/null | \
-        grep --line-buffered -E "(rm|chmod|chown)" | \
-        while read -r line; do
-            echo -e "${WT_RED}🚨 MUTATION: $line${WT_RESET}"
-        done
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli alert
 }
 
 wt_export() {
-    local output="${1:-$WATCHTOWER_DIR/watchtower-export.json}"
-    if [ ! -d "$WATCHTOWER_DIR" ]; then
-        echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
-        return 1
-    fi
-    local output_dir
-    output_dir=$(dirname "$output")
-    mkdir -p "$output_dir"
-    echo "Exporting logs to $output..."
-    local first=true
-    echo '{"events": [' > "$output"
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        [ -f "$WATCHTOWER_DIR/$log" ] || continue
-        while IFS= read -r line || [ -n "$line" ]; do
-            if [ -n "$line" ]; then
-                [ "$first" = false ] && printf ',' >> "$output"
-                first=false
-                local escaped="$line"
-                escaped="${escaped//\\/\\\\}"
-                escaped="${escaped//\"/\\\"}"
-                escaped="${escaped//$'\n'/\\n}"
-                escaped="${escaped//$'\r'/\\r}"
-                escaped="${escaped//$'\t'/\\t}"
-                printf '{"log": "%s", "entry": "%s"}\n' "$log" "$escaped" >> "$output"
-            fi
-        done < "$WATCHTOWER_DIR/$log"
-    done
-    echo ']}' >> "$output"
-    chmod 600 "$output" 2>/dev/null || true
-    echo -e "${WT_GREEN}✅ Exported to $output${WT_RESET}"
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli export -o "${1:-$WATCHTOWER_DIR/export.json}"
 }
 
 wt_report() {
-    echo -e "${WT_BLUE}=== Watchtower Daily Report ===${WT_RESET}"
-    if [ ! -d "$WATCHTOWER_DIR" ]; then
-        echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
-        return 1
-    fi
-    echo ""
-    echo -e "${WT_YELLOW}Command frequency (last 24h):${WT_RESET}"
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        [ -f "$WATCHTOWER_DIR/$log" ] && cat "$WATCHTOWER_DIR/$log" 2>/dev/null
-    done | sed -n 's/.*\[WATCHTOWER\] \([^ ]*\).*/\1/p' | sort | uniq -c | sort -rn | head -20
-    echo ""
-    echo -e "${WT_YELLOW}Total entries by log:${WT_RESET}"
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        if [ -f "$WATCHTOWER_DIR/$log" ]; then
-            count=$(wc -l < "$WATCHTOWER_DIR/$log")
-        else
-            count=0
-        fi
-        printf "  %-15s %s entries\n" "$log" "$count"
-    done
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli report
 }
 
 wt_recent() {
-    local n="${1:-20}"
-    echo -e "${WT_BLUE}=== Last $n entries ===${WT_RESET}"
-    if [ ! -d "$WATCHTOWER_DIR" ]; then
-        echo -e "${WT_RED}Watchtower not initialized. Run: wt_init${WT_RESET}"
-        return 1
-    fi
-    local logs=()
-    for log in "${WATCHTOWER_LOGS[@]}"; do
-        [ -f "$WATCHTOWER_DIR/$log" ] && logs+=("$WATCHTOWER_DIR/$log")
-    done
-    [ ${#logs[@]} -eq 0 ] && return 0
-    tail -n "$n" "${logs[@]}" 2>/dev/null
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli tail -n "${1:-20}"
 }
 
 wt_status() {
@@ -180,18 +79,29 @@ wt_status() {
         echo "  wt_init      - Initialize audit directory"
         echo "  wt_clean     - Clear all logs"
         echo "  wt_stats     - Show tool usage statistics"
-        echo "  wt_watch     - Live dashboard (updates every 2s)"
-        echo "  wt_tail      - Tail all logs"
+        echo "  wt_watch     - Live dashboard"
+        echo "  wt_tail      - Tail ledger entries"
         echo "  wt_alert     - Alert on mutations"
-        echo "  wt_export    - Export logs as JSON"
-        echo "  wt_report    - Daily report"
+        echo "  wt_gtfo      - GTFOBins monitoring"
+        echo "  wt_export    - Export ledger as JSON"
+        echo "  wt_report    - Usage report"
         echo "  wt_recent    - Show recent activity"
+        echo "  wt_verify    - Verify ledger integrity"
     else
         echo -e "${WT_YELLOW}⚠️  Watchtower not initialized${WT_RESET}"
         echo "Run: wt_init"
     fi
 }
 
+wt_verify() {
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli verify
+}
+
+wt_gtfo() {
+    PYTHONPATH="$WT_MODULE:$PYTHONPATH" "$WT_PYTHON" -m watchtower.cli gtfo "$@"
+}
+
+# Aliases
 alias watchtower-init='wt_init'
 alias watchtower-clean='wt_clean'
 alias watchtower-stats='wt_stats'
@@ -202,3 +112,10 @@ alias watchtower-export='wt_export'
 alias watchtower-report='wt_report'
 alias watchtower-recent='wt_recent'
 alias watchtower-status='wt_status'
+alias watchtower-verify='wt_verify'
+alias watchtower-gtfo='wt_gtfo'
+
+# PATH setup for safe binaries
+if [ -d "$WT_SCRIPT_DIR/bin" ]; then
+    export PATH="$WT_SCRIPT_DIR/bin:$PATH"
+fi

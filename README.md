@@ -1,10 +1,26 @@
-# Watchtower
+# Watchtower 2.0
 
-Production-grade remote operations with audit logging. Safe commands for SSH, kubectl, and filesystem operations with centralized logging and mutation alerts.
+**Policy-driven audit and guard system for safe operations.**
+
+Watchtower intercepts system operations (SSH, kubectl, filesystem, search), evaluates them against declarative policies, executes approved actions in restricted subprocesses, and records everything in a tamper-evident ledger.
+
+## What's New in 2.0
+
+- **Policy Engine**: Declarative JSON policies with a safe expression language—no more hardcoded bash rules
+- **Tamper-Evident Ledger**: SHA-256 hash chain across append-only JSON Lines files
+- **Structured Logging**: Every action is a queryable record, not a text line
+- **Safe Command Wrappers**: Real binaries that parse arguments, evaluate policy, and execute with restrictions
+- **No External Dependencies**: Core runs on Python 3.8+ standard library only
+- **Cross-Platform**: Linux, macOS, and BSD support with graceful degradation
 
 ## Requirements
 
-This plugin requires the **[UTCP Bridge](https://github.com/universal-tool-calling-protocol/utcp-mcp)** on your system. The 16 UTCP tools are designed for AI agents to safely execute remote commands with full audit trails. Without UTCP, you only get the shell commands (`wt_*`) — the core value is in the guarded AI-accessible tools.
+- Python 3.8+
+- Bash or Zsh (for shell integration)
+
+Optional (for enhanced sandboxing on Linux):
+- `python-seccomp` for syscall filtering
+- Linux 5.13+ for Landlock LSM support
 
 ## Install
 
@@ -15,8 +31,62 @@ cd opencode-watchtower
 
 # Setup
 ./install.sh
-source ~/.bashrc
+source ~/.bashrc   # or ~/.zshrc
 ```
+
+## Quick Start
+
+```bash
+# Initialize
+wt_init
+
+# Check status
+wt_status
+
+# View recent activity
+wt_tail
+
+# Verify ledger integrity
+wt_verify
+
+# Export for analysis
+wt_export ./audit-report.json
+```
+
+## Shell Commands
+
+| Command | Purpose |
+|---------|---------|
+| `wt_init` | Create ledger directory and default policy |
+| `wt_clean` | Clear all ledger files |
+| `wt_stats` | Show usage statistics by domain and verdict |
+| `wt_watch` | Live dashboard (updates every 2s) |
+| `wt_tail` | Show recent ledger entries |
+| `wt_alert` | Alert on filesystem mutations |
+| `wt_gtfo` | GTFOBins monitoring and alerting |
+| `wt_export` | Export ledger as JSON |
+| `wt_report` | Usage frequency report |
+| `wt_recent` | Show last N entries |
+| `wt_status` | Check initialization status |
+| `wt_verify` | Verify ledger cryptographic integrity |
+
+## Safe Commands
+
+All safe commands route through the Watchtower Guard:
+
+### Filesystem
+- `safe-rm`, `safe-cp`, `safe-mv`
+- `safe-mkdir`, `safe-touch`
+- `safe-chown`, `safe-chmod`, `safe-ln`
+
+### SSH
+- `ssh-ls`, `ssh-cat`, `ssh-ps`
+
+### Kubernetes
+- `kubectl-exec-read`, `kubectl-get-yaml`, `kubectl-logs`
+
+### Search
+- `rg-search`, `jq-query`
 
 ## UTCP Integration
 
@@ -28,124 +98,136 @@ Add to your `~/.utcp_config.json`:
 }
 ```
 
-Or copy the `remote-safe` template into your config.
+## Policies
 
-## Shell Commands
+Policies are stored in `~/.watchtower/policy.json`. Example:
 
-| Command | Purpose |
-|---------|---------|
-| `wt_init` | Create `/tmp/watchtower/` audit logs |
-| `wt_clean` | Clear all logs |
-| `wt_stats` | Show tool usage statistics |
-| `wt_watch` | Live dashboard (updates every 2s) |
-| `wt_tail` | `tail -f` all logs |
-| `wt_alert` | Alert on mutations (rm/chmod/chown) |
-| `wt_export` | Export logs as JSON |
-| `wt_report` | Daily command frequency report |
-| `wt_recent` | Show last N entries |
-| `wt_status` | Check initialization status |
-
-## UTCP Tools (16 total)
-
-### SSH Operations
-- `ssh_ls` — Read-only directory listing
-- `ssh_cat` — Read file contents
-- `ssh_ps` — List processes
-
-### Kubernetes Operations
-- `kubectl_exec_read` — Safe kubectl exec (cat, ls, ps, df, top)
-- `kubectl_get_yaml` — Get resource as YAML
-- `kubectl_logs` — Get pod logs
-
-### Search Operations
-- `rg_search` — Ripgrep search (no mutation flags)
-- `jq_query` — JSON processing
-
-### Filesystem Operations
-- `safe_rm` — Remove with protected path blocking
-- `safe_mkdir` — Create directories
-- `safe_touch` — Create/update files
-- `safe_mv` — Move (no-clobber by default)
-- `safe_cp` — Copy (no-clobber by default)
-- `safe_chown` — Change ownership (restricted combos)
-- `safe_chmod` — Change permissions (safe modes only)
-- `safe_ln` — Create symlinks
-
-## Audit Logs
-
-```
-/tmp/watchtower/
-├── ssh.log      # SSH operations
-├── k8s.log      # Kubernetes operations
-├── search.log   # rg/jq operations
-└── fs.log       # Filesystem operations
+```json
+{
+  "version": "2.0.0",
+  "policies": [
+    {
+      "name": "allow-tmp-read",
+      "priority": 100,
+      "match": {
+        "domain": "filesystem",
+        "operation": "read"
+      },
+      "condition": "target.path.startswith('/tmp/')",
+      "action": "allow",
+      "audit": "standard",
+      "risk_level": "low"
+    }
+  ]
+}
 ```
 
-Each logged entry includes `[WATCHTOWER]` prefix for easy parsing.
+### Policy Actions
 
-## Safety Guards
+| Action | Behavior |
+|--------|----------|
+| `allow` | Execute and log |
+| `deny` | Block and log |
+| `escalate` | Queue for approval |
+| `shadow` | Execute with heavy logging |
 
-### Path Protection
-`safe_rm` blocks: `/`, `/home`, `/etc`, `/var`, `/usr`, `/root`, `/bin`, `/sbin`, `/lib`, `/opt`
+### Condition Language
 
-### Mode Restrictions
-- `safe_chmod`: Only `644`, `755`, `600`, `700`, `640`, `750`
-- `safe_chown`: Only `root:root`, `www-data:www-data`, `ubuntu:ubuntu`, `$USER:$USER`
-- `kubectl_exec_read`: Only `cat`, `ls`, `ps`, `df`, `top`
+A safe subset of Python expressions:
 
-### Default Behavior
-- `safe_mv`, `safe_cp`: `no-clobber` by default (won't overwrite)
-- `safe_rm`: Requires explicit `mode: dir-recursive` for recursive deletion
+```python
+target.path.startswith('/home/') and '..' not in target.path
+identity.capabilities.count('fs:read') > 0
+any(target.path.startswith(p) for p in ('/etc', '/usr'))
+```
 
-## GTFOBins Risk Classification
+## Audit Ledger
 
-Each tool includes a `gtfo_risk` level based on [GTFOBins](https://gtfobins.github.io/) signatures:
+Stored in `~/.watchtower/ledger-*.jsonl`:
 
-| Risk Level | Meaning |
-|------------|---------|
-| **critical** | Can spawn shell, escalate privileges, bypass all security |
-| **high** | Can read/write arbitrary files or execute commands |
-| **medium** | Can leak information or perform limited privileged ops |
-| **low** | Minimal abuse potential |
+```json
+{
+  "seq": 1,
+  "timestamp": "2024-01-15T10:30:00Z",
+  "data": {
+    "identity": {"principal": "user:alice", "capabilities": ["fs:read"]},
+    "intent": {"domain": "filesystem", "operation": "read", "target": {"path": "/tmp/test.txt"}},
+    "decision": {"verdict": "allow", "matched_rules": ["allow-tmp-read"], "risk_score": 0.15}
+  },
+  "prev_hash": "0000...0000",
+  "hash": "a3f2...b8c1"
+}
+```
 
-### Tool Risk Levels
+Each entry chains to the previous via SHA-256. Tampering breaks the chain and is detected by `wt_verify`.
 
-| Tool | Risk | Underlying Binary |
-|------|------|-------------------|
-| `ssh_ls`, `ssh_cat`, `ssh_ps` | medium | `ssh` (tunnel/proxy) |
-| `kubectl_exec_read`, `kubectl_get_yaml`, `kubectl_logs` | high | `kubectl` (secrets, exec) |
-| `rg_search`, `jq_query` | low | `rg`, `jq` (read-only) |
-| `safe_rm` | medium | `rm` (sudo file-write) |
-| `safe_mv`, `safe_cp` | medium | `mv`, `cp` (sudo file-write) |
-| `safe_chown`, `safe_chmod` | medium | `chown`, `chmod` (sudo) |
-| `safe_mkdir`, `safe_touch`, `safe_ln` | low | `mkdir`, `touch`, `ln` |
+## GTFOBins Monitoring
 
-The `gtfo.json` file contains full signatures for 100+ binaries. AI agents should check this reference before executing any command.
+Watchtower 2.0 includes the **complete GTFOBins database** (458 binaries) and actively monitors for GTFOBins invocations at runtime.
 
-## Example Usage
+### GTFOBins Detection
+
+Every executed command is analyzed against the full GTFOBins database:
+- **Binary matching** — detects if a GTFOBin is invoked
+- **Flag analysis** — identifies dangerous flag combinations (`-c`, `-exec`, `-p`, etc.)
+- **Context awareness** — detects sudo/suid/capabilities contexts
+- **Dynamic scoring** — critical binaries score 1.0, high-risk score 0.85+
+
+### GTFOBins Policy Integration
+
+GTFOBins detections automatically influence policy decisions:
+- **Critical GTFOBins** → auto-escalate to require approval
+- **High-risk GTFOBins** → shadow mode (execute with heavy logging)
+- **All GTFOBins** → annotated in the tamper-evident ledger
+
+### GTFOBins Commands
 
 ```bash
-# Initialize
-wt_init
+# List all GTFOBins in the database
+wt_gtfo --list
 
-# Watch live in one terminal
-wt_watch
+# Scan ledger for GTFOBins usage
+wt_gtfo
 
-# In another terminal, use UTCP tools
-# (AI agent calls safe_rm, kubectl_exec_read, etc.)
-
-# Check stats
-wt_stats
-
-# Export for analysis
-wt_export ./audit-report.json
+# Real-time GTFOBins monitoring
+wt_gtfo --monitor
 ```
+
+### GTFOBins Ledger Output
+
+When a GTFOBin is detected, the ledger entry includes:
+
+```json
+{
+  "annotations": {
+    "gtfo_alerts": [
+      {
+        "binary": "bash",
+        "risk": "critical",
+        "score": 1.0,
+        "flags": ["shell:-c"]
+      }
+    ]
+  }
+}
+```
+
+The complete database is sourced from [GTFOBins.github.io](https://gtfobins.github.io/) and parsed directly from the official repository.
+
+## GTFOBins Risk Classification (Legacy)
+
+The original static `gtfo.json` has been replaced with the full 458-binary database. Risk levels in policies (`critical`, `high`, `medium`, `low`) are dynamically computed from the GTFOBins functions (shell, command, file-read, file-write, suid, sudo, capabilities, etc.).
 
 ## Environment Variables
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `WATCHTOWER_DIR` | `/tmp/watchtower` | Audit log directory |
+| `WATCHTOWER_DIR` | `~/.watchtower` | Ledger and policy directory |
+| `WT_PYTHON` | `python3` | Python interpreter path |
+
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full design evolution, trade-off analysis, and forward trajectory.
 
 ## License
 

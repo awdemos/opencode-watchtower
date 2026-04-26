@@ -1,510 +1,5611 @@
 {
-  "$schema": "https://raw.githubusercontent.com/awdemos/opencode-watchtower/main/gtfo.schema.json",
-  "version": "1.0.0",
-  "source": "https://github.com/GTFOBins/GTFOBins.github.io",
-  "description": "GTFOBins signatures for high-risk Unix binaries that can bypass security restrictions",
+  "version": "2.0.0",
+  "source": "https://gtfobins.github.io/",
+  "updated": "2026-04-26",
+  "count": 458,
+  "description": "Complete GTFOBins database for Watchtower monitoring",
   "risk_levels": {
     "critical": "Can spawn shell, escalate privileges, or bypass all security",
-    "high": "Can read/write arbitrary files or execute commands",
-    "medium": "Can leak information or perform limited operations"
-  },
-  "binaries": {
-    "bash": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid", "caps"],
-      "description": "Shell access, can spawn interactive shell"
-    },
-    "sh": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Shell access"
-    },
-    "zsh": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Shell access"
-    },
-    "dash": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo"],
-      "description": "Shell access"
-    },
-    "ash": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo"],
-      "description": "Shell access"
-    },
-    "csh": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo"],
-      "description": "Shell access"
-    },
-    "ksh": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo"],
-      "description": "Shell access"
-    },
-    "python": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid", "caps"],
-      "description": "Can spawn shell via os.system/exec"
-    },
-    "python3": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid", "caps"],
-      "description": "Can spawn shell via os.system/exec"
-    },
-    "perl": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid", "caps"],
-      "description": "Can spawn shell via system/exec"
-    },
-    "ruby": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can spawn shell via system/exec"
-    },
-    "php": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can spawn shell via system/exec"
-    },
-    "node": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can spawn shell via child_process"
-    },
-    "awk": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can execute system commands via system()"
-    },
-    "gawk": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can execute system commands"
-    },
-    "sed": {
-      "risk": "high",
-      "vectors": ["file-write", "sudo"],
-      "description": "Can write to arbitrary files"
-    },
-    "vi": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid", "file-read", "file-write"],
-      "description": "Can spawn shell, read/write files"
-    },
-    "vim": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid", "file-read", "file-write"],
-      "description": "Can spawn shell, read/write files"
-    },
-    "nvim": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "file-read", "file-write"],
-      "description": "Can spawn shell, read/write files"
-    },
-    "emacs": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "file-read", "file-write"],
-      "description": "Can spawn shell, read/write files"
-    },
-    "nano": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can read/write files with sudo"
-    },
-    "less": {
-      "risk": "medium",
-      "vectors": ["shell", "sudo", "file-read"],
-      "description": "Can spawn shell via !command, read files"
-    },
-    "more": {
-      "risk": "medium",
-      "vectors": ["shell", "sudo", "file-read"],
-      "description": "Can spawn shell via !command"
-    },
-    "man": {
-      "risk": "medium",
-      "vectors": ["shell", "sudo"],
-      "description": "Can spawn shell via !command in pager"
-    },
-    "git": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "file-read"],
-      "description": "Can spawn shell via git-shell, read files"
-    },
-    "curl": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can read/write files, exfiltrate data"
-    },
-    "wget": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-write"],
-      "description": "Can download/write files"
-    },
-    "nc": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "reverse-shell"],
-      "description": "Can create reverse shells, data exfil"
-    },
-    "ncat": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "reverse-shell"],
-      "description": "Can create reverse shells"
-    },
-    "netcat": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "reverse-shell"],
-      "description": "Can create reverse shells"
-    },
-    "socat": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "reverse-shell"],
-      "description": "Can create reverse shells, relay traffic"
-    },
-    "nmap": {
-      "risk": "medium",
-      "vectors": ["shell", "sudo"],
-      "description": "Can spawn shell via --interactive"
-    },
-    "find": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid", "file-read"],
-      "description": "Can spawn shell via -exec, read files"
-    },
-    "xargs": {
-      "risk": "high",
-      "vectors": ["shell", "sudo"],
-      "description": "Can execute arbitrary commands"
-    },
-    "env": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can execute commands with modified env"
-    },
-    "cp": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can overwrite critical files"
-    },
-    "mv": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-write"],
-      "description": "Can move/replace critical files"
-    },
-    "cat": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can read arbitrary files with sudo"
-    },
-    "head": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can read files with sudo"
-    },
-    "tail": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can read files with sudo"
-    },
-    "dd": {
-      "risk": "high",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can read/write raw disk, bypass permissions"
-    },
-    "tar": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid", "file-read"],
-      "description": "Can execute via --checkpoint-action"
-    },
-    "zip": {
-      "risk": "medium",
-      "vectors": ["shell", "sudo", "file-read"],
-      "description": "Can execute commands"
-    },
-    "gcc": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can compile and execute code"
-    },
-    "g++": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can compile and execute code"
-    },
-    "clang": {
-      "risk": "high",
-      "vectors": ["shell", "sudo"],
-      "description": "Can compile and execute code"
-    },
-    "make": {
-      "risk": "high",
-      "vectors": ["shell", "sudo", "suid"],
-      "description": "Can execute arbitrary commands"
-    },
-    "docker": {
-      "risk": "critical",
-      "vectors": ["shell", "sudo", "privilege-escalation"],
-      "description": "Full container access, root on host"
-    },
-    "kubectl": {
-      "risk": "high",
-      "vectors": ["sudo", "privilege-escalation"],
-      "description": "Can exec into pods, access secrets"
-    },
-    "ssh": {
-      "risk": "medium",
-      "vectors": ["sudo", "tunnel", "proxy"],
-      "description": "Can tunnel traffic, proxy commands"
-    },
-    "scp": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can transfer files to/from remote"
-    },
-    "rsync": {
-      "risk": "medium",
-      "vectors": ["shell", "sudo", "file-read", "file-write"],
-      "description": "Can execute commands, transfer files"
-    },
-    "mount": {
-      "risk": "high",
-      "vectors": ["sudo", "suid", "privilege-escalation"],
-      "description": "Can mount filesystems, escalate privs"
-    },
-    "umount": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can unmount filesystems"
-    },
-    "fdisk": {
-      "risk": "high",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Disk manipulation"
-    },
-    "chown": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can change file ownership"
-    },
-    "chmod": {
-      "risk": "medium",
-      "vectors": ["sudo", "suid"],
-      "description": "Can change file permissions"
-    },
-    "chroot": {
-      "risk": "high",
-      "vectors": ["sudo", "suid"],
-      "description": "Can escape via chroot"
-    },
-    "su": {
-      "risk": "critical",
-      "vectors": ["sudo", "suid", "privilege-escalation"],
-      "description": "Switch user, escalate privileges"
-    },
-    "sudo": {
-      "risk": "critical",
-      "vectors": ["suid", "privilege-escalation"],
-      "description": "Execute as any user"
-    },
-    "doas": {
-      "risk": "critical",
-      "vectors": ["suid", "privilege-escalation"],
-      "description": "Execute as another user"
-    },
-    "pkexec": {
-      "risk": "critical",
-      "vectors": ["suid", "privilege-escalation"],
-      "description": "PolicyKit execute as root"
-    },
-    "passwd": {
-      "risk": "high",
-      "vectors": ["suid"],
-      "description": "Can change passwords"
-    },
-    "crontab": {
-      "risk": "high",
-      "vectors": ["sudo", "file-write"],
-      "description": "Can schedule malicious jobs"
-    },
-    "at": {
-      "risk": "high",
-      "vectors": ["sudo", "shell"],
-      "description": "Can schedule command execution"
-    },
-    "screen": {
-      "risk": "medium",
-      "vectors": ["sudo", "suid", "shell"],
-      "description": "Can detach persistent sessions"
-    },
-    "tmux": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can detach persistent sessions"
-    },
-    "script": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can record/execute commands"
-    },
-    "base64": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can encode/decode files"
-    },
-    "xxd": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read", "file-write"],
-      "description": "Can read/write binary files"
-    },
-    "od": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can dump files in various formats"
-    },
-    "hexdump": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can dump files"
-    },
-    "strings": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can extract strings from files"
-    },
-    "gdb": {
-      "risk": "high",
-      "vectors": ["sudo", "suid", "shell"],
-      "description": "Can debug, modify processes, spawn shell"
-    },
-    "strace": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can trace syscalls, read data"
-    },
-    "ltrace": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can trace library calls"
-    },
-    "tcpdump": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can capture network traffic"
-    },
-    "tshark": {
-      "risk": "medium",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can analyze network traffic"
-    },
-    "wireshark": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can capture network traffic"
-    },
-    "iptables": {
-      "risk": "high",
-      "vectors": ["sudo"],
-      "description": "Can modify firewall rules"
-    },
-    "ip": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can modify network config"
-    },
-    "iproute2": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can modify network config"
-    },
-    "service": {
-      "risk": "high",
-      "vectors": ["sudo"],
-      "description": "Can start/stop services"
-    },
-    "systemctl": {
-      "risk": "high",
-      "vectors": ["sudo", "shell"],
-      "description": "Can manage services, exec commands"
-    },
-    "journalctl": {
-      "risk": "low",
-      "vectors": ["sudo", "file-read"],
-      "description": "Can read logs"
-    },
-    "apt": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install packages"
-    },
-    "apt-get": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install packages"
-    },
-    "yum": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install packages"
-    },
-    "dnf": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install packages"
-    },
-    "pip": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install Python packages"
-    },
-    "npm": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install Node packages"
-    },
-    "gem": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install Ruby packages"
-    },
-    "cpan": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install Perl packages"
-    },
-    "easy_install": {
-      "risk": "medium",
-      "vectors": ["sudo", "shell"],
-      "description": "Can install Python packages"
-    },
-    "pkcon": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "PackageKit console"
-    },
-    "snap": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can install snap packages"
-    },
-    "flatpak": {
-      "risk": "medium",
-      "vectors": ["sudo"],
-      "description": "Can install flatpak packages"
-    }
+    "high": "Can read/write arbitrary files, execute commands, or create shells",
+    "medium": "Can leak information or perform limited privileged operations",
+    "low": "Minimal abuse potential"
   },
   "vectors": {
     "shell": "Can spawn interactive shell",
+    "command": "Can execute arbitrary commands",
     "sudo": "Can be abused with sudo privileges",
     "suid": "Can be abused if SUID bit is set",
-    "caps": "Can be abused with special capabilities",
+    "capabilities": "Can be abused with special capabilities",
     "file-read": "Can read arbitrary files",
     "file-write": "Can write to arbitrary files",
-    "privilege-escalation": "Can escalate to root",
     "reverse-shell": "Can create reverse shell connection",
-    "tunnel": "Can tunnel/forward traffic",
-    "proxy": "Can proxy connections"
+    "bind-shell": "Can create bind shell",
+    "file-upload": "Can upload files",
+    "file-download": "Can download files",
+    "library-load": "Can load arbitrary libraries",
+    "limited-suid": "Can be abused with limited SUID"
+  },
+  "binaries": {
+    "7z": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: 7z"
+    },
+    "R": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: R"
+    },
+    "aa-exec": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: aa-exec"
+    },
+    "ab": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "upload"
+      ],
+      "description": "GTFOBin: ab"
+    },
+    "acr": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: acr"
+    },
+    "agetty": {
+      "risk": "critical",
+      "vectors": [
+        "suid"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: agetty"
+    },
+    "alpine": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: alpine"
+    },
+    "ansible-playbook": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ansible-playbook"
+    },
+    "ansible-test": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ansible-test"
+    },
+    "aoss": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: aoss"
+    },
+    "apache2": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: apache2"
+    },
+    "apache2ctl": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: apache2ctl"
+    },
+    "apport-cli": {
+      "risk": "medium",
+      "vectors": [
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: apport-cli"
+    },
+    "apt-get": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: apt-get"
+    },
+    "aptitude": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: aptitude"
+    },
+    "ar": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ar"
+    },
+    "arch-nspawn": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: arch-nspawn"
+    },
+    "aria2c": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "download",
+        "file-read"
+      ],
+      "description": "GTFOBin: aria2c"
+    },
+    "arj": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: arj"
+    },
+    "arp": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: arp"
+    },
+    "as": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: as"
+    },
+    "ascii-xfr": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ascii-xfr"
+    },
+    "ascii85": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ascii85"
+    },
+    "ash": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: ash"
+    },
+    "aspell": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: aspell"
+    },
+    "asterisk": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: asterisk"
+    },
+    "at": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "shell"
+      ],
+      "description": "GTFOBin: at"
+    },
+    "atobm": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: atobm"
+    },
+    "autoconf": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: autoconf"
+    },
+    "autoheader": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: autoheader"
+    },
+    "autoreconf": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: autoreconf"
+    },
+    "aws": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "inherit"
+      ],
+      "description": "GTFOBin: aws"
+    },
+    "base32": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: base32"
+    },
+    "base58": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: base58"
+    },
+    "base64": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: base64"
+    },
+    "basenc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: basenc"
+    },
+    "basez": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: basez"
+    },
+    "bash": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "library-load",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: bash"
+    },
+    "bashbug": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: bashbug"
+    },
+    "batcat": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: batcat"
+    },
+    "bbot": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: bbot"
+    },
+    "bc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: bc"
+    },
+    "bconsole": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: bconsole"
+    },
+    "bee": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: bee"
+    },
+    "borg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: borg"
+    },
+    "bpftrace": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: bpftrace"
+    },
+    "bridge": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: bridge"
+    },
+    "bundle": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: bundle"
+    },
+    "busctl": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: busctl"
+    },
+    "busybox": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "reverse-shell",
+        "upload"
+      ],
+      "description": "GTFOBin: busybox"
+    },
+    "byebug": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: byebug"
+    },
+    "bzip2": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: bzip2"
+    },
+    "cabal": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: cabal"
+    },
+    "cancel": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "upload"
+      ],
+      "description": "GTFOBin: cancel"
+    },
+    "capsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: capsh"
+    },
+    "cargo": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: cargo"
+    },
+    "cat": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: cat"
+    },
+    "cdist": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: cdist"
+    },
+    "certbot": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: certbot"
+    },
+    "chattr": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: chattr"
+    },
+    "check_by_ssh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: check_by_ssh"
+    },
+    "check_cups": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: check_cups"
+    },
+    "check_log": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: check_log"
+    },
+    "check_memory": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: check_memory"
+    },
+    "check_raid": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: check_raid"
+    },
+    "check_ssl_cert": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: check_ssl_cert"
+    },
+    "check_statusfile": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: check_statusfile"
+    },
+    "chmod": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: chmod"
+    },
+    "choom": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: choom"
+    },
+    "chown": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: chown"
+    },
+    "chroot": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: chroot"
+    },
+    "chrt": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: chrt"
+    },
+    "clamscan": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: clamscan"
+    },
+    "clisp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: clisp"
+    },
+    "cmake": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: cmake"
+    },
+    "cmp": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: cmp"
+    },
+    "cobc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: cobc"
+    },
+    "code": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "reverse-shell",
+        "upload"
+      ],
+      "description": "GTFOBin: code"
+    },
+    "codex": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: codex"
+    },
+    "column": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: column"
+    },
+    "comm": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: comm"
+    },
+    "composer": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: composer"
+    },
+    "cowsay": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: cowsay"
+    },
+    "cowthink": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: cowthink"
+    },
+    "cp": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: cp"
+    },
+    "cpan": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: cpan"
+    },
+    "cpio": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: cpio"
+    },
+    "cpulimit": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: cpulimit"
+    },
+    "crash": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "inherit"
+      ],
+      "description": "GTFOBin: crash"
+    },
+    "crontab": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "inherit"
+      ],
+      "description": "GTFOBin: crontab"
+    },
+    "csh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: csh"
+    },
+    "csplit": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: csplit"
+    },
+    "csvtool": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: csvtool"
+    },
+    "ctr": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ctr"
+    },
+    "cupsfilter": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: cupsfilter"
+    },
+    "curl": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "library-load",
+        "upload"
+      ],
+      "description": "GTFOBin: curl"
+    },
+    "cut": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: cut"
+    },
+    "dash": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: dash"
+    },
+    "date": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: date"
+    },
+    "dc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: dc"
+    },
+    "dd": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: dd"
+    },
+    "debugfs": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: debugfs"
+    },
+    "dhclient": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: dhclient"
+    },
+    "dialog": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: dialog"
+    },
+    "diff": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: diff"
+    },
+    "dig": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: dig"
+    },
+    "distcc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: distcc"
+    },
+    "dmesg": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "inherit"
+      ],
+      "description": "GTFOBin: dmesg"
+    },
+    "dmidecode": {
+      "risk": "high",
+      "vectors": [
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: dmidecode"
+    },
+    "dmsetup": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: dmsetup"
+    },
+    "dnf": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: dnf"
+    },
+    "dnsmasq": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: dnsmasq"
+    },
+    "doas": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: doas"
+    },
+    "docker": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: docker"
+    },
+    "dos2unix": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: dos2unix"
+    },
+    "dosbox": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: dosbox"
+    },
+    "dotnet": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: dotnet"
+    },
+    "dpkg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: dpkg"
+    },
+    "dstat": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: dstat"
+    },
+    "dvips": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: dvips"
+    },
+    "easy_install": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: easy_install"
+    },
+    "easyrsa": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: easyrsa"
+    },
+    "eb": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: eb"
+    },
+    "ed": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: ed"
+    },
+    "efax": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: efax"
+    },
+    "egrep": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: egrep"
+    },
+    "elvish": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: elvish"
+    },
+    "emacs": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: emacs"
+    },
+    "enscript": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: enscript"
+    },
+    "env": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: env"
+    },
+    "eqn": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: eqn"
+    },
+    "espeak": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: espeak"
+    },
+    "ex": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: ex"
+    },
+    "exiftool": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "inherit"
+      ],
+      "description": "GTFOBin: exiftool"
+    },
+    "expand": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: expand"
+    },
+    "expect": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: expect"
+    },
+    "facter": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: facter"
+    },
+    "fail2ban-client": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: fail2ban-client"
+    },
+    "fastfetch": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: fastfetch"
+    },
+    "ffmpeg": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "library-load"
+      ],
+      "description": "GTFOBin: ffmpeg"
+    },
+    "fgrep": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: fgrep"
+    },
+    "file": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: file"
+    },
+    "find": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: find"
+    },
+    "finger": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "upload"
+      ],
+      "description": "GTFOBin: finger"
+    },
+    "firejail": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: firejail"
+    },
+    "fish": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: fish"
+    },
+    "flock": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: flock"
+    },
+    "fmt": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: fmt"
+    },
+    "fold": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: fold"
+    },
+    "forge": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: forge"
+    },
+    "fping": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: fping"
+    },
+    "ftp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: ftp"
+    },
+    "fzf": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "shell"
+      ],
+      "description": "GTFOBin: fzf"
+    },
+    "gawk": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: gawk"
+    },
+    "gcc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: gcc"
+    },
+    "gcloud": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: gcloud"
+    },
+    "gcore": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: gcore"
+    },
+    "gdb": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: gdb"
+    },
+    "gem": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: gem"
+    },
+    "genie": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: genie"
+    },
+    "genisoimage": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: genisoimage"
+    },
+    "getent": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: getent"
+    },
+    "ghc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ghc"
+    },
+    "ghci": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ghci"
+    },
+    "gimp": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: gimp"
+    },
+    "ginsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ginsh"
+    },
+    "git": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: git"
+    },
+    "gnuplot": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: gnuplot"
+    },
+    "go": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: go"
+    },
+    "grc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: grc"
+    },
+    "grep": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: grep"
+    },
+    "gtester": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: gtester"
+    },
+    "guile": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: guile"
+    },
+    "gzip": {
+      "risk": "high",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: gzip"
+    },
+    "hashcat": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: hashcat"
+    },
+    "head": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: head"
+    },
+    "hexdump": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: hexdump"
+    },
+    "hg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: hg"
+    },
+    "highlight": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: highlight"
+    },
+    "hping3": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: hping3"
+    },
+    "iconv": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: iconv"
+    },
+    "iftop": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: iftop"
+    },
+    "install": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: install"
+    },
+    "ionice": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ionice"
+    },
+    "ip": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: ip"
+    },
+    "iptables-save": {
+      "risk": "high",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: iptables-save"
+    },
+    "irb": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: irb"
+    },
+    "ispell": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ispell"
+    },
+    "java": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: java"
+    },
+    "jjs": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: jjs"
+    },
+    "joe": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: joe"
+    },
+    "join": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: join"
+    },
+    "journalctl": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: journalctl"
+    },
+    "jq": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: jq"
+    },
+    "jrunscript": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: jrunscript"
+    },
+    "jshell": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: jshell"
+    },
+    "jtag": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: jtag"
+    },
+    "julia": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: julia"
+    },
+    "knife": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: knife"
+    },
+    "ksshell": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ksshell"
+    },
+    "ksu": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ksu"
+    },
+    "kubectl": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: kubectl"
+    },
+    "last": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: last"
+    },
+    "latex": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: latex"
+    },
+    "latexmk": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: latexmk"
+    },
+    "ld.so": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ld.so"
+    },
+    "ldconfig": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "library-load"
+      ],
+      "description": "GTFOBin: ldconfig"
+    },
+    "less": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "file-read",
+        "file-write",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: less"
+    },
+    "lftp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: lftp"
+    },
+    "links": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: links"
+    },
+    "ln": {
+      "risk": "medium",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: ln"
+    },
+    "loginctl": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: loginctl"
+    },
+    "logrotate": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: logrotate"
+    },
+    "logsave": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: logsave"
+    },
+    "look": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: look"
+    },
+    "lp": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "upload"
+      ],
+      "description": "GTFOBin: lp"
+    },
+    "ltrace": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: ltrace"
+    },
+    "lua": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: lua"
+    },
+    "lualatex": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: lualatex"
+    },
+    "luatex": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: luatex"
+    },
+    "lwp-download": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: lwp-download"
+    },
+    "lwp-request": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: lwp-request"
+    },
+    "lxd": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: lxd"
+    },
+    "m4": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: m4"
+    },
+    "mail": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: mail"
+    },
+    "make": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: make"
+    },
+    "man": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: man"
+    },
+    "mawk": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: mawk"
+    },
+    "minicom": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: minicom"
+    },
+    "more": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: more"
+    },
+    "mosh-server": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: mosh-server"
+    },
+    "mosquitto": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: mosquitto"
+    },
+    "mount": {
+      "risk": "medium",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: mount"
+    },
+    "msfconsole": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: msfconsole"
+    },
+    "msgattrib": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: msgattrib"
+    },
+    "msgcat": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: msgcat"
+    },
+    "msgconv": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: msgconv"
+    },
+    "msgfilter": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: msgfilter"
+    },
+    "msgmerge": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: msgmerge"
+    },
+    "msguniq": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: msguniq"
+    },
+    "mtr": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: mtr"
+    },
+    "multitime": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: multitime"
+    },
+    "mutt": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: mutt"
+    },
+    "mv": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: mv"
+    },
+    "mypy": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: mypy"
+    },
+    "mysql": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "library-load",
+        "shell"
+      ],
+      "description": "GTFOBin: mysql"
+    },
+    "nano": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: nano"
+    },
+    "nasm": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: nasm"
+    },
+    "nc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "download",
+        "reverse-shell",
+        "upload"
+      ],
+      "description": "GTFOBin: nc"
+    },
+    "ncdu": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ncdu"
+    },
+    "ncftp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ncftp"
+    },
+    "needrestart": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: needrestart"
+    },
+    "neofetch": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: neofetch"
+    },
+    "nft": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: nft"
+    },
+    "nginx": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "library-load",
+        "upload"
+      ],
+      "description": "GTFOBin: nginx"
+    },
+    "nice": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: nice"
+    },
+    "nl": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: nl"
+    },
+    "nm": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: nm"
+    },
+    "nmap": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: nmap"
+    },
+    "node": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: node"
+    },
+    "nohup": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "shell"
+      ],
+      "description": "GTFOBin: nohup"
+    },
+    "npm": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: npm"
+    },
+    "nroff": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: nroff"
+    },
+    "nsenter": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: nsenter"
+    },
+    "ntpdate": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ntpdate"
+    },
+    "octave": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: octave"
+    },
+    "od": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: od"
+    },
+    "opencode": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "inherit"
+      ],
+      "description": "GTFOBin: opencode"
+    },
+    "openssl": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "library-load",
+        "reverse-shell",
+        "upload"
+      ],
+      "description": "GTFOBin: openssl"
+    },
+    "openvpn": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: openvpn"
+    },
+    "openvt": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: openvt"
+    },
+    "opkg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: opkg"
+    },
+    "pandoc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "inherit"
+      ],
+      "description": "GTFOBin: pandoc"
+    },
+    "passwd": {
+      "risk": "medium",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: passwd"
+    },
+    "paste": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: paste"
+    },
+    "pax": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: pax"
+    },
+    "pdb": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: pdb"
+    },
+    "pdflatex": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: pdflatex"
+    },
+    "pdftex": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: pdftex"
+    },
+    "perf": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: perf"
+    },
+    "perl": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: perl"
+    },
+    "perlbug": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: perlbug"
+    },
+    "pexec": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: pexec"
+    },
+    "pg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: pg"
+    },
+    "php": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: php"
+    },
+    "pic": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: pic"
+    },
+    "pidstat": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: pidstat"
+    },
+    "pip": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: pip"
+    },
+    "pipx": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: pipx"
+    },
+    "pkexec": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: pkexec"
+    },
+    "pkg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: pkg"
+    },
+    "plymouth": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: plymouth"
+    },
+    "podman": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: podman"
+    },
+    "poetry": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: poetry"
+    },
+    "posh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: posh"
+    },
+    "pr": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: pr"
+    },
+    "procmail": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: procmail"
+    },
+    "pry": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: pry"
+    },
+    "psftp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: psftp"
+    },
+    "psql": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: psql"
+    },
+    "ptx": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ptx"
+    },
+    "puppet": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: puppet"
+    },
+    "pwsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: pwsh"
+    },
+    "pygmentize": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: pygmentize"
+    },
+    "pyright": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: pyright"
+    },
+    "python": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "library-load",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: python"
+    },
+    "qpdf": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: qpdf"
+    },
+    "rake": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "inherit"
+      ],
+      "description": "GTFOBin: rake"
+    },
+    "ranger": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ranger"
+    },
+    "rc": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: rc"
+    },
+    "readelf": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: readelf"
+    },
+    "redcarpet": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: redcarpet"
+    },
+    "redis": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: redis"
+    },
+    "restic": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: restic"
+    },
+    "rev": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: rev"
+    },
+    "rlogin": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "upload"
+      ],
+      "description": "GTFOBin: rlogin"
+    },
+    "rlwrap": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: rlwrap"
+    },
+    "rpm": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: rpm"
+    },
+    "rpmdb": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: rpmdb"
+    },
+    "rpmquery": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: rpmquery"
+    },
+    "rpmverify": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: rpmverify"
+    },
+    "rsync": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: rsync"
+    },
+    "rsyslogd": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: rsyslogd"
+    },
+    "rtorrent": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: rtorrent"
+    },
+    "ruby": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "library-load",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: ruby"
+    },
+    "run-mailcap": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: run-mailcap"
+    },
+    "run-parts": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: run-parts"
+    },
+    "runscript": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: runscript"
+    },
+    "rustc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "inherit"
+      ],
+      "description": "GTFOBin: rustc"
+    },
+    "rustdoc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: rustdoc"
+    },
+    "rustfmt": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: rustfmt"
+    },
+    "rustup": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "shell"
+      ],
+      "description": "GTFOBin: rustup"
+    },
+    "sash": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: sash"
+    },
+    "scanmem": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: scanmem"
+    },
+    "scp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: scp"
+    },
+    "screen": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: screen"
+    },
+    "script": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: script"
+    },
+    "scrot": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: scrot"
+    },
+    "sed": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: sed"
+    },
+    "service": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: service"
+    },
+    "setarch": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: setarch"
+    },
+    "setcap": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: setcap"
+    },
+    "setfacl": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: setfacl"
+    },
+    "setlock": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: setlock"
+    },
+    "sftp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: sftp"
+    },
+    "sg": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: sg"
+    },
+    "shred": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: shred"
+    },
+    "shuf": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: shuf"
+    },
+    "slsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: slsh"
+    },
+    "smbclient": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: smbclient"
+    },
+    "snap": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: snap"
+    },
+    "socat": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "download",
+        "file-read",
+        "file-write",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: socat"
+    },
+    "socket": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "bind-shell",
+        "reverse-shell"
+      ],
+      "description": "GTFOBin: socket"
+    },
+    "soelim": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: soelim"
+    },
+    "softlimit": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: softlimit"
+    },
+    "sort": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: sort"
+    },
+    "split": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: split"
+    },
+    "sqlite3": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: sqlite3"
+    },
+    "sqlmap": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: sqlmap"
+    },
+    "ss": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ss"
+    },
+    "ssh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: ssh"
+    },
+    "ssh-agent": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: ssh-agent"
+    },
+    "ssh-copy-id": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: ssh-copy-id"
+    },
+    "ssh-keygen": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "library-load"
+      ],
+      "description": "GTFOBin: ssh-keygen"
+    },
+    "ssh-keyscan": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ssh-keyscan"
+    },
+    "sshfs": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "download",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: sshfs"
+    },
+    "sshpass": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: sshpass"
+    },
+    "sshuttle": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: sshuttle"
+    },
+    "start-stop-daemon": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: start-stop-daemon"
+    },
+    "stdbuf": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: stdbuf"
+    },
+    "strace": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: strace"
+    },
+    "strings": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: strings"
+    },
+    "su": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: su"
+    },
+    "sudo": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: sudo"
+    },
+    "sysctl": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "file-read"
+      ],
+      "description": "GTFOBin: sysctl"
+    },
+    "systemctl": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit",
+        "shell"
+      ],
+      "description": "GTFOBin: systemctl"
+    },
+    "systemd-resolve": {
+      "risk": "medium",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: systemd-resolve"
+    },
+    "systemd-run": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command",
+        "shell"
+      ],
+      "description": "GTFOBin: systemd-run"
+    },
+    "tac": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: tac"
+    },
+    "tail": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: tail"
+    },
+    "tailscale": {
+      "risk": "medium",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "upload"
+      ],
+      "description": "GTFOBin: tailscale"
+    },
+    "tar": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: tar"
+    },
+    "task": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: task"
+    },
+    "taskset": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: taskset"
+    },
+    "tasksh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: tasksh"
+    },
+    "tbl": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: tbl"
+    },
+    "tclsh": {
+      "risk": "critical",
+      "vectors": [
+        "capabilities",
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "library-load",
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: tclsh"
+    },
+    "tcpdump": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "file-write"
+      ],
+      "description": "GTFOBin: tcpdump"
+    },
+    "tcsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: tcsh"
+    },
+    "tdbtool": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: tdbtool"
+    },
+    "tee": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: tee"
+    },
+    "telnet": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "reverse-shell",
+        "shell"
+      ],
+      "description": "GTFOBin: telnet"
+    },
+    "terraform": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: terraform"
+    },
+    "tex": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: tex"
+    },
+    "tftp": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "upload"
+      ],
+      "description": "GTFOBin: tftp"
+    },
+    "tic": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: tic"
+    },
+    "time": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: time"
+    },
+    "timedatectl": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: timedatectl"
+    },
+    "timeout": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: timeout"
+    },
+    "tmate": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: tmate"
+    },
+    "tmux": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: tmux"
+    },
+    "top": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: top"
+    },
+    "torify": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: torify"
+    },
+    "torsocks": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: torsocks"
+    },
+    "troff": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: troff"
+    },
+    "tsc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: tsc"
+    },
+    "tshark": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: tshark"
+    },
+    "ul": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: ul"
+    },
+    "unexpand": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: unexpand"
+    },
+    "uniq": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: uniq"
+    },
+    "unshare": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: unshare"
+    },
+    "unsquashfs": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: unsquashfs"
+    },
+    "unzip": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "privilege-escalation"
+      ],
+      "description": "GTFOBin: unzip"
+    },
+    "update-alternatives": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: update-alternatives"
+    },
+    "urlget": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: urlget"
+    },
+    "uuencode": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: uuencode"
+    },
+    "uv": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: uv"
+    },
+    "vagrant": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: vagrant"
+    },
+    "valgrind": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: valgrind"
+    },
+    "varnishncsa": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "file-write"
+      ],
+      "description": "GTFOBin: varnishncsa"
+    },
+    "vi": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write",
+        "shell"
+      ],
+      "description": "GTFOBin: vi"
+    },
+    "vigr": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: vigr"
+    },
+    "vim": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "inherit"
+      ],
+      "description": "GTFOBin: vim"
+    },
+    "vipw": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: vipw"
+    },
+    "virsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "command",
+        "file-write"
+      ],
+      "description": "GTFOBin: virsh"
+    },
+    "volatility": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: volatility"
+    },
+    "w3m": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: w3m"
+    },
+    "wall": {
+      "risk": "high",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: wall"
+    },
+    "watch": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: watch"
+    },
+    "wc": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: wc"
+    },
+    "wg-quick": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: wg-quick"
+    },
+    "wget": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: wget"
+    },
+    "whiptail": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: whiptail"
+    },
+    "whois": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "upload"
+      ],
+      "description": "GTFOBin: whois"
+    },
+    "wireshark": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-write",
+        "inherit"
+      ],
+      "description": "GTFOBin: wireshark"
+    },
+    "wish": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: wish"
+    },
+    "xargs": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: xargs"
+    },
+    "xdg-user-dir": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: xdg-user-dir"
+    },
+    "xdotool": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: xdotool"
+    },
+    "xmodmap": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: xmodmap"
+    },
+    "xmore": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: xmore"
+    },
+    "xpad": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: xpad"
+    },
+    "xxd": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "file-write"
+      ],
+      "description": "GTFOBin: xxd"
+    },
+    "xz": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: xz"
+    },
+    "yarn": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: yarn"
+    },
+    "yash": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: yash"
+    },
+    "yelp": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: yelp"
+    },
+    "yt-dlp": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: yt-dlp"
+    },
+    "yum": {
+      "risk": "critical",
+      "vectors": [
+        "sudo"
+      ],
+      "functions": [
+        "command",
+        "download",
+        "inherit"
+      ],
+      "description": "GTFOBin: yum"
+    },
+    "zathura": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: zathura"
+    },
+    "zcat": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: zcat"
+    },
+    "zgrep": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: zgrep"
+    },
+    "zic": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "command"
+      ],
+      "description": "GTFOBin: zic"
+    },
+    "zip": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read",
+        "shell"
+      ],
+      "description": "GTFOBin: zip"
+    },
+    "zless": {
+      "risk": "medium",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "inherit"
+      ],
+      "description": "GTFOBin: zless"
+    },
+    "zsh": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "download",
+        "file-read",
+        "file-write",
+        "inherit",
+        "reverse-shell",
+        "shell",
+        "upload"
+      ],
+      "description": "GTFOBin: zsh"
+    },
+    "zsoelim": {
+      "risk": "high",
+      "vectors": [
+        "sudo",
+        "suid",
+        "unprivileged"
+      ],
+      "functions": [
+        "file-read"
+      ],
+      "description": "GTFOBin: zsoelim"
+    },
+    "zypper": {
+      "risk": "critical",
+      "vectors": [
+        "sudo",
+        "unprivileged"
+      ],
+      "functions": [
+        "shell"
+      ],
+      "description": "GTFOBin: zypper"
+    }
   }
 }

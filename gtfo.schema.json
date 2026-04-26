@@ -4,7 +4,7 @@
   "title": "GTFOBins Signatures",
   "description": "Schema for GTFOBins signatures describing high-risk Unix binaries",
   "type": "object",
-  "required": ["version", "source", "description", "risk_levels", "binaries", "vectors"],
+  "required": ["version", "source", "description", "count", "risk_levels", "binaries", "vectors"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -19,9 +19,17 @@
       "format": "uri",
       "description": "URL referencing the original GTFOBins data source"
     },
+    "updated": {
+      "type": "string",
+      "description": "Date the database was last updated"
+    },
     "description": {
       "type": "string",
       "description": "Human-readable description of the signatures file"
+    },
+    "count": {
+      "type": "integer",
+      "description": "Total number of binaries in the database"
     },
     "risk_levels": {
       "type": "object",
@@ -35,7 +43,7 @@
       "description": "Mapping of binary names to their risk profiles",
       "additionalProperties": {
         "type": "object",
-        "required": ["risk", "description"],
+        "required": ["risk", "description", "functions", "vectors"],
         "properties": {
           "risk": {
             "type": "string",
@@ -45,6 +53,13 @@
           "vectors": {
             "type": "array",
             "description": "Abuse vectors applicable to this binary",
+            "items": {
+              "type": "string"
+            }
+          },
+          "functions": {
+            "type": "array",
+            "description": "GTFOBins functions this binary supports",
             "items": {
               "type": "string"
             }
