@@ -1,0 +1,145 @@
+"""
+Safe command wrappers for Watchtower.
+
+Each safe command is registered as a console script entry point.
+This module handles all safe commands by inspecting sys.argv[0].
+"""
+from __future__ import annotations
+
+import os
+import sys
+
+from watchtower.guard import Guard
+from watchtower.schema import Identity, Intent, Resource
+
+COMMAND_MAP = {
+    "safe-rm": ("filesystem", "delete", "path", ["mode"]),
+    "safe-cp": ("filesystem", "copy", "dest", ["source", "mode"]),
+    "safe-mv": ("filesystem", "move", "dest", ["source", "mode"]),
+    "safe-mkdir": ("filesystem", "create_dir", "path", ["mode"]),
+    "safe-touch": ("filesystem", "create_file", "path", ["timestamp"]),
+    "safe-chown": ("filesystem", "chown", "path", ["owner", "recursive"]),
+    "safe-chmod": ("filesystem", "chmod", "path", ["mode", "recursive"]),
+    "safe-ln": ("filesystem", "symlink", "linkpath", ["target", "mode"]),
+    "ssh-ls": ("ssh", "list", "path", ["host", "user", "port"]),
+    "ssh-cat": ("ssh", "read", "file", ["host", "user", "port"]),
+    "ssh-ps": ("ssh", "ps", "host", ["user", "port"]),
+    "kubectl-exec-read": ("kubernetes", "exec", "pod", ["ns", "cmd", "path"]),
+    "kubectl-get-yaml": ("kubernetes", "get", "name", ["resource", "ns"]),
+    "kubectl-logs": ("kubernetes", "logs", "pod", ["ns", "tail"]),
+    "rg-search": ("search", "rg", "path", ["pattern", "type"]),
+    "jq-query": ("search", "jq", "file", ["query"]),
+}
+
+
+def build_system_command(cmd_name: str, args) -> list:
+    """Build the actual system command from parsed args."""
+    if cmd_name == "safe-rm":
+        mode = args.mode or "file"
+        if mode == "dir-recursive":
+            return ["rm", "-rf", args.path]
+        elif mode == "dir":
+            return ["rmdir", args.path]
+        return ["rm", "-f", args.path]
+    elif cmd_name == "safe-cp":
+        flag = {"no-clobber": "-n", "force": "-f", "backup": "-b", "archive": "-a"}.get(args.mode, "-n")
+        return ["cp", flag, args.source, args.dest]
+    elif cmd_name == "safe-mv":
+        flag = {"no-clobber": "-n", "force": "-f", "backup": "-b"}.get(args.mode, "-n")
+        return ["mv", flag, args.source, args.dest]
+    elif cmd_name == "safe-mkdir":
+        if args.mode == "parents":
+            return ["mkdir", "-p", args.path]
+        return ["mkdir", args.path]
+    elif cmd_name == "safe-touch":
+        if args.timestamp:
+            return ["touch", "-t", args.timestamp, args.path]
+        return ["touch", args.path]
+    elif cmd_name == "safe-chown":
+        cmd = ["chown"]
+        if args.recursive == "yes":
+            cmd.append("-R")
+        cmd.extend([args.owner, args.path])
+        return cmd
+    elif cmd_name == "safe-chmod":
+        cmd = ["chmod"]
+        if args.recursive == "yes":
+            cmd.append("-R")
+        cmd.extend([args.mode, args.path])
+        return cmd
+    elif cmd_name == "safe-ln":
+        flag = {"soft": "-s", "force-soft": "-sf"}.get(args.mode, "-s")
+        return ["ln", flag, args.target, args.linkpath]
+    elif cmd_name == "ssh-ls":
+        return ["ssh", "-p", str(args.port), f"{args.user}@{args.host}", f"ls -la {args.path}"]
+    elif cmd_name == "ssh-cat":
+        return ["ssh", "-p", str(args.port), f"{args.user}@{args.host}", f"cat {args.file}"]
+    elif cmd_name == "ssh-ps":
+        return ["ssh", "-p", str(args.port), f"{args.user}@{args.host}", "ps aux"]
+    elif cmd_name == "kubectl-exec-read":
+        return ["kubectl", "exec", args.pod, "-n", args.ns, "--", args.cmd or "ls", args.path or "/"]
+    elif cmd_name == "kubectl-get-yaml":
+        return ["kubectl", "get", args.resource, args.name, "-n", args.ns, "-o", "yaml"]
+    elif cmd_name == "kubectl-logs":
+        return ["kubectl", "logs", args.pod, "-n", args.ns, f"--tail={args.tail}"]
+    elif cmd_name == "rg-search":
+        return ["rg", "--type", args.type or "code", args.pattern, args.path]
+    elif cmd_name == "jq-query":
+        return ["jq", args.query, args.file]
+    return []
+
+
+def main() -> int:
+    cmd_name = os.path.basename(sys.argv[0])
+    if cmd_name not in COMMAND_MAP:
+        print(f"Unknown command: {cmd_name}", file=sys.stderr)
+        print(f"Known commands: {', '.join(COMMAND_MAP.keys())}", file=sys.stderr)
+        return 1
+
+    domain, operation, target_param, extra_params = COMMAND_MAP[cmd_name]
+
+    import argparse
+    parser = argparse.ArgumentParser(prog=cmd_name)
+    parser.add_argument(target_param, help="Target path")
+    for p in extra_params:
+        parser.add_argument(f"--{p}", default="")
+    parser.add_argument("--identity", default="user:cli")
+    args = parser.parse_args()
+
+    target = Resource(path=getattr(args, target_param, ""))
+    params = {p: getattr(args, p) for p in extra_params}
+
+    intent = Intent(domain=domain, operation=operation, target=target, params=params)
+    identity = Identity(principal=args.identity)
+
+    base_dir = os.environ.get("WATCHTOWER_DIR", os.path.expanduser("~/.watchtower"))
+    policy_path = os.path.join(base_dir, "policy.json")
+
+    if not os.path.exists(policy_path):
+        print(f"Watchtower not initialized. Run: watchtower init", file=sys.stderr)
+        return 1
+
+    guard = Guard(policy_path, base_dir)
+    cmd = build_system_command(cmd_name, args)
+    result = guard.check(identity, intent, cmd=cmd)
+
+    if not result["allowed"]:
+        print(f"DENIED by policy '{result['rule']}': {result['verdict']}", file=sys.stderr)
+        if result.get("gtfo_alerts"):
+            for alert in result["gtfo_alerts"]:
+                print(f"  GTFOBin: {alert['binary']} ({alert['risk']}, score={alert['score']:.2f})", file=sys.stderr)
+        return 1
+
+    exec_info = result.get("execution")
+    if exec_info:
+        if exec_info.get("stdout"):
+            print(exec_info["stdout"], end="")
+        if exec_info.get("stderr"):
+            print(exec_info["stderr"], end="", file=sys.stderr)
+        return exec_info.get("returncode", 0)
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

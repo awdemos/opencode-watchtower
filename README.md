@@ -29,9 +29,17 @@ Optional (for enhanced sandboxing on Linux):
 git clone https://github.com/awdemos/opencode-watchtower.git
 cd opencode-watchtower
 
-# Setup
+# Install package (puts all commands on PATH)
 ./install.sh
 source ~/.bashrc   # or ~/.zshrc
+```
+
+Or manually with pip:
+
+```bash
+pip install -e .
+# On systems with PEP 668 (macOS Homebrew, Debian 12+):
+pip install -e . --break-system-packages
 ```
 
 ## Quick Start
@@ -88,15 +96,27 @@ All safe commands route through the Watchtower Guard:
 ### Search
 - `rg-search`, `jq-query`
 
-## UTCP Integration
+## UTCP / Opencode Integration
 
-Add to your `~/.utcp_config.json`:
+After `pip install -e .`, all safe commands are available on PATH. Add Watchtower to your opencode UTCP config:
 
 ```json
 {
   "imports": ["/path/to/opencode-watchtower/watchtower.json"]
 }
 ```
+
+The `watchtower.json` exposes 16 safe tools:
+- **SSH**: `ssh_ls`, `ssh_cat`, `ssh_ps`
+- **Kubernetes**: `kubectl_exec_read`, `kubectl_get_yaml`, `kubectl_logs`
+- **Search**: `rg_search`, `jq_query`
+- **Filesystem**: `safe_rm`, `safe_mkdir`, `safe_touch`, `safe_mv`, `safe_cp`, `safe_chown`, `safe_chmod`, `safe_ln`
+
+All commands automatically:
+1. Evaluate policy before execution
+2. Log to the tamper-evident ledger
+3. Scan for GTFOBins and escalate if critical
+4. Run in restricted subprocesses
 
 ## Policies
 

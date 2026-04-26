@@ -13,28 +13,32 @@ if ! command -v python3 &>/dev/null; then
     exit 1
 fi
 
+# Detect pip install capability (PEP 668 externally-managed environments)
+PIP_INSTALL="python3 -m pip install -e ."
+if python3 -m pip install --dry-run -e . 2>&1 | grep -q "externally-managed-environment"; then
+    PIP_INSTALL="python3 -m pip install -e . --break-system-packages"
+    echo "Note: Using --break-system-packages for system Python"
+fi
+
+echo "Installing watchtower package..."
+cd "$CONF_DIR"
+$PIP_INSTALL --quiet
+
+echo "✅ Package installed"
+echo "   Commands available: safe-rm, safe-cp, ssh-ls, kubectl-logs, watchtower, etc."
+echo ""
+
+# Create ledger directory and default policy
 mkdir -p "$WATCHTOWER_DIR"
 chmod 700 "$WATCHTOWER_DIR"
 
-# Create default policy if missing
 if [ ! -f "$WATCHTOWER_DIR/policy.json" ]; then
     cp "$CONF_DIR/policies/default.json" "$WATCHTOWER_DIR/policy.json"
     echo "✅ Default policy installed"
 fi
 
 # Initialize ledger
-PYTHONPATH="$CONF_DIR:$PYTHONPATH" python3 -m watchtower.cli init
-
-# Create symlinks for safe binaries
-if [ -d "$CONF_DIR/bin" ]; then
-    for cmd in safe-rm safe-cp safe-mv safe-mkdir safe-touch safe-chown safe-chmod safe-ln \
-               ssh-ls ssh-cat ssh-ps \
-               kubectl-exec-read kubectl-get-yaml kubectl-logs \
-               rg-search jq-query; do
-        ln -sf "$CONF_DIR/bin/watchtower-safe" "$CONF_DIR/bin/$cmd" 2>/dev/null || true
-    done
-    echo "✅ Safe command wrappers installed"
-fi
+watchtower init
 
 # Shell integration
 if [ -n "$BASH_VERSION" ]; then
@@ -60,4 +64,5 @@ fi
 
 echo ""
 echo "To use now: source $CONF_DIR/watchtower.sh"
-echo "Then run: wt_status"
+echo "Or use commands directly: watchtower init, safe-rm, ssh-ls, etc."
+echo "Then run: watchtower status"

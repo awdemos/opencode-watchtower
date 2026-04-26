@@ -115,7 +115,7 @@ alias watchtower-status='wt_status'
 alias watchtower-verify='wt_verify'
 alias watchtower-gtfo='wt_gtfo'
 
-# PATH setup for safe binaries
-if [ -d "$WT_SCRIPT_DIR/bin" ]; then
+# Development PATH fallback (not needed after pip install)
+if [ -d "$WT_SCRIPT_DIR/bin" ] && [[ ":$PATH:" != *":$WT_SCRIPT_DIR/bin:"* ]]; then
     export PATH="$WT_SCRIPT_DIR/bin:$PATH"
 fi

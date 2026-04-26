@@ -25,6 +25,23 @@ classifiers = [
 
 [project.scripts]
 watchtower = "watchtower.cli:main"
+watchtower-safe = "watchtower.safe_commands:main"
+safe-rm = "watchtower.safe_commands:main"
+safe-cp = "watchtower.safe_commands:main"
+safe-mv = "watchtower.safe_commands:main"
+safe-mkdir = "watchtower.safe_commands:main"
+safe-touch = "watchtower.safe_commands:main"
+safe-chown = "watchtower.safe_commands:main"
+safe-chmod = "watchtower.safe_commands:main"
+safe-ln = "watchtower.safe_commands:main"
+ssh-ls = "watchtower.safe_commands:main"
+ssh-cat = "watchtower.safe_commands:main"
+ssh-ps = "watchtower.safe_commands:main"
+kubectl-exec-read = "watchtower.safe_commands:main"
+kubectl-get-yaml = "watchtower.safe_commands:main"
+kubectl-logs = "watchtower.safe_commands:main"
+rg-search = "watchtower.safe_commands:main"
+jq-query = "watchtower.safe_commands:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
