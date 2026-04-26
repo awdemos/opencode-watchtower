@@ -1,0 +1,504 @@
+{
+  "$schema": "https://utcp.io/schema/manual.json",
+  "name": "watchtower",
+  "version": "2.0.0",
+  "description": "Policy-driven audit and guard system for safe operations. All commands route through the Watchtower Guard for policy evaluation and tamper-evident logging.",
+  "gtfo_reference": "./gtfo.json",
+  "manual_call_templates": [
+    {
+      "name": "remote-safe",
+      "description": "Scoped remote system operations with policy enforcement and audit logging",
+      "call_template": {
+        "call_template_type": "cli",
+        "command": "bash",
+        "working_directory": "."
+      },
+      "tools": [
+        {
+          "name": "ssh_ls",
+          "description": "Read-only directory listing via SSH with policy enforcement",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "ssh",
+          "inputs": {
+            "host": {
+              "type": "string",
+              "description": "Remote host"
+            },
+            "user": {
+              "type": "string",
+              "default": "ubuntu"
+            },
+            "path": {
+              "type": "string",
+              "default": "/home/ubuntu"
+            },
+            "port": {
+              "type": "integer",
+              "default": 22
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/ssh-ls '${path}' --host='${host}' --user='${user}' --port=${port}"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "ssh_cat",
+          "description": "Read file contents via SSH with policy enforcement",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "ssh",
+          "inputs": {
+            "host": {
+              "type": "string",
+              "description": "Remote host"
+            },
+            "user": {
+              "type": "string",
+              "default": "ubuntu"
+            },
+            "file": {
+              "type": "string",
+              "description": "File path"
+            },
+            "port": {
+              "type": "integer",
+              "default": 22
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/ssh-cat '${file}' --host='${host}' --user='${user}' --port=${port}"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "ssh_ps",
+          "description": "List processes on remote host via SSH",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "ssh",
+          "inputs": {
+            "host": {
+              "type": "string",
+              "description": "Remote host"
+            },
+            "user": {
+              "type": "string",
+              "default": "ubuntu"
+            },
+            "port": {
+              "type": "integer",
+              "default": 22
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/ssh-ps '${host}' --host='${host}' --user='${user}' --port=${port}"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "kubectl_exec_read",
+          "description": "Read-only kubectl exec with policy enforcement",
+          "gtfo_risk": "high",
+          "gtfo_binary": "kubectl",
+          "inputs": {
+            "pod": {
+              "type": "string",
+              "description": "Pod name"
+            },
+            "ns": {
+              "type": "string",
+              "default": "default"
+            },
+            "cmd": {
+              "type": "string",
+              "enum": [
+                "cat",
+                "ls",
+                "ps",
+                "df",
+                "top"
+              ],
+              "default": "ls"
+            },
+            "path": {
+              "type": "string",
+              "default": "/"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/kubectl-exec-read '${pod}' --ns='${ns}' --cmd='${cmd}' --path='${path}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "kubectl_get_yaml",
+          "description": "Get Kubernetes resource as YAML with audit logging",
+          "gtfo_risk": "high",
+          "gtfo_binary": "kubectl",
+          "inputs": {
+            "resource": {
+              "type": "string",
+              "description": "Resource type"
+            },
+            "name": {
+              "type": "string",
+              "description": "Resource name"
+            },
+            "ns": {
+              "type": "string",
+              "default": "default"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/kubectl-get-yaml '${name}' --resource='${resource}' --ns='${ns}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "kubectl_logs",
+          "description": "Get pod logs with audit logging",
+          "gtfo_risk": "high",
+          "gtfo_binary": "kubectl",
+          "inputs": {
+            "pod": {
+              "type": "string",
+              "description": "Pod name"
+            },
+            "ns": {
+              "type": "string",
+              "default": "default"
+            },
+            "tail": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/kubectl-logs '${pod}' --ns='${ns}' --tail=${tail}"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "rg_search",
+          "description": "Safe ripgrep search with policy enforcement",
+          "gtfo_risk": "low",
+          "inputs": {
+            "pattern": {
+              "type": "string",
+              "description": "Search pattern"
+            },
+            "path": {
+              "type": "string",
+              "default": "."
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "code",
+                "text",
+                "path"
+              ],
+              "default": "code"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/rg-search '${path}' --pattern='${pattern}' --type='${type}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "jq_query",
+          "description": "Safe JSON processing with audit logging",
+          "gtfo_risk": "low",
+          "inputs": {
+            "file": {
+              "type": "string",
+              "description": "JSON file path"
+            },
+            "query": {
+              "type": "string",
+              "description": "jq query"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/jq-query '${file}' --query='${query}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_rm",
+          "description": "Safe removal with protected path blocking and audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_vectors": [
+            "sudo",
+            "file-write"
+          ],
+          "inputs": {
+            "path": {
+              "type": "string",
+              "description": "Path to remove"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "file",
+                "dir",
+                "dir-recursive"
+              ],
+              "default": "file"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-rm '${path}' --mode='${mode}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_mkdir",
+          "description": "Safe directory creation with audit logging",
+          "gtfo_risk": "low",
+          "inputs": {
+            "path": {
+              "type": "string",
+              "description": "Directory path"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "single",
+                "parents"
+              ],
+              "default": "parents"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-mkdir '${path}' --mode='${mode}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_touch",
+          "description": "Safe file creation with audit logging",
+          "gtfo_risk": "low",
+          "inputs": {
+            "path": {
+              "type": "string",
+              "description": "File path"
+            },
+            "timestamp": {
+              "type": "string",
+              "default": ""
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-touch '${path}' --timestamp='${timestamp}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_mv",
+          "description": "Safe move with no-clobber default and audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "mv",
+          "inputs": {
+            "source": {
+              "type": "string",
+              "description": "Source path"
+            },
+            "dest": {
+              "type": "string",
+              "description": "Destination path"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "no-clobber",
+                "force",
+                "backup"
+              ],
+              "default": "no-clobber"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-mv '${dest}' --source='${source}' --mode='${mode}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_cp",
+          "description": "Safe copy with no-clobber default and audit logging",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "cp",
+          "inputs": {
+            "source": {
+              "type": "string",
+              "description": "Source path"
+            },
+            "dest": {
+              "type": "string",
+              "description": "Destination path"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "no-clobber",
+                "force",
+                "backup",
+                "archive"
+              ],
+              "default": "no-clobber"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-cp '${dest}' --source='${source}' --mode='${mode}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_chown",
+          "description": "Safe ownership change with restricted combinations",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "chown",
+          "inputs": {
+            "path": {
+              "type": "string",
+              "description": "Path"
+            },
+            "owner": {
+              "type": "string",
+              "enum": [
+                "root:root",
+                "www-data:www-data",
+                "ubuntu:ubuntu",
+                "$USER:$USER"
+              ],
+              "default": "$USER:$USER"
+            },
+            "recursive": {
+              "type": "string",
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "default": "no"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-chown '${path}' --owner='${owner}' --recursive='${recursive}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_chmod",
+          "description": "Safe permission change with safe modes only",
+          "gtfo_risk": "medium",
+          "gtfo_binary": "chmod",
+          "inputs": {
+            "path": {
+              "type": "string",
+              "description": "Path"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "644",
+                "755",
+                "600",
+                "700",
+                "640",
+                "750"
+              ],
+              "default": "644"
+            },
+            "recursive": {
+              "type": "string",
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "default": "no"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-chmod '${path}' --mode='${mode}' --recursive='${recursive}'"
+            ],
+            "command": "bash"
+          }
+        },
+        {
+          "name": "safe_ln",
+          "description": "Safe symlink creation with audit logging",
+          "gtfo_risk": "low",
+          "inputs": {
+            "target": {
+              "type": "string",
+              "description": "Target path"
+            },
+            "linkpath": {
+              "type": "string",
+              "description": "Link path"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "soft",
+                "force-soft"
+              ],
+              "default": "soft"
+            }
+          },
+          "call_template": {
+            "args": [
+              "-c",
+              "/usr/local/bin/safe-ln '${linkpath}' --target='${target}' --mode='${mode}'"
+            ],
+            "command": "bash"
+          }
+        }
+      ]
+    }
+  ]
+}
